@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selected Main-Sub Agent Collaboration Cases</title>
+<style>
+:root {
+  --bg: #fafaf9;
+  --card: #fff;
+  --ink: #1a1a1a;
+  --muted: #666;
+  --border: #d4d4d4;
+  --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.6;
+}
+.wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+h1 { font-size: 28px; margin: 0 0 8px; }
+.subtitle { color: var(--muted); margin-bottom: 28px; font-size: 15px; }
+.top-links { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0 30px; }
+.top-links a { color: #1d4ed8; text-decoration: none; font-weight: 600; }
+.section-title { font-size: 20px; font-weight: 700; margin: 34px 0 14px; }
+.picks { display: flex; flex-direction: column; gap: 18px; }
+.pick-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 5px solid #2563eb;
+  border-radius: 10px;
+  padding: 22px 26px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.pick-num { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.pick-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.pick-title a { color: var(--ink); text-decoration: none; }
+.pick-title a:hover { color: var(--accent); }
+.pick-q { font-style: italic; color: var(--muted); margin-bottom: 12px; font-size: 14px; }
+.pick-stats { font-size: 13px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+.note { background: #f9fafb; border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-top: 28px; font-size: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Selected Main-Sub Agent Collaboration Cases</h1>
+
+  <div class="section-title">核心干净样本 / Core clean</div>
+<div class="picks">
+    <div class="pick-card">
+      <div class="pick-num">#1 · Core clean · Chinese · redsearcher Entry 0</div>
+      <div class="pick-title"><a href="core_clean/redsearcher_pick_0.html">Dissolved Australian nonprofit from linked public-record clues</a></div>
+      <div class="pick-q">截至2023年，我需要找到一个现已解散的非营利组织。它成立于澳大利亚SBS电视台开播的那一年，并于20世纪90年代中期停止运作。这是一个与某个成立于1988年的已解散政治党派同名的基金会。在其运营的某个财年中，它组织活动并授予了恰好410项非独家许可。该组织曾多年接受位于南半球、与新西兰隔塔斯曼海相望的那个国家的中央政府部分资助，但这项资助在切尔诺贝利核事故同年终止，此后它转而参与了一项推广本国产品的全国性运动。该组织曾发布一份议会文件，其编号与一家其总部...</div>
+      <div class="pick-stats">6 called sub-agents · completed: 6 · 7 flow nodes · answer: Advance Australia Foundation · Two rounds of focused sub-agent delegation verify independent public-record constraints; all six called sub-agents completed successfully.</div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-num">#2 · Core clean · English · redsearcher Entry 2</div>
+      <div class="pick-title"><a href="core_clean/redsearcher_pick_2.html">Footballer identified through club, referee, qualifier, and roster constraints</a></div>
+      <div class="pick-q">A defensive footballer from a Central European nation was a member of a Russian club founded by railway workers. That club's first major trophy was winning its country's premier domestic cup in the late summer of 1936, and it is n...</div>
+      <div class="pick-stats">8 called sub-agents · completed: 8 · 7 flow nodes · answer: Maciej Rybus · Eight completed sub-agents split the sports-history constraints cleanly, and the main agent synthesizes them into one player.</div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-num">#3 · Core clean · English · redsearcher Entry 6</div>
+      <div class="pick-title"><a href="core_clean/redsearcher_pick_6.html">Australian road project linked to rail works and funding commitments</a></div>
+      <div class="pick-q">As of late 2025, a major road infrastructure project in the Eastern Australian state whose Premier co-committed equal federal-state funding saw its first northern section open to traffic. This partially completed motorway's lead c...</div>
+      <div class="pick-stats">5 called sub-agents · completed: 5 · 7 flow nodes · answer: Coomera Connector · Five completed sub-agents independently verify the project identity, prior corridor name, funding, and contractor overlap.</div>
+    </div>
+</div><div class="section-title">强协作样本（含子 agent 瑕疵） / Strong with sub-agent blemishes</div>
+<div class="picks">
+    <div class="pick-card">
+      <div class="pick-num">#1 · Strong with sub-agent blemishes · Chinese · redsearcher Entry 3</div>
+      <div class="pick-title"><a href="strong_with_sub_agent_blemishes/redsearcher_pick_3.html">Hui folk performer identified through expedition, county-name, and local-economy clues</a></div>
+      <div class="pick-q">在20世纪20年代中期的初春，一位后来在位于天山山脉北麓、与哈萨克斯坦接壤的地区成名的回族民间音乐表演者诞生了。有趣的是，他出生的这个月份，正是一个南方革命政权发起一场与后来其他东征同名的军事行动的时候。他的根，扎在一个距离伊宁市约90公里、名称与纺织工业线密度单位相同的县级行政区划。那里，一个名字意为'黑色丛林'的镇，在十四五规划收官之年的12月，传来了村级集体经济增收82万元的消息。这位艺术家曾在那县的外贸易管理部门服务，直至80年代中期荣休。那么，这...</div>
+      <div class="pick-stats">6 called sub-agents · completed: 4, token_limit: 2 · 9 flow nodes · answer: 马金福 · Six sub-agents cover the historical month, Teles County clue, Karatokay black-forest clue, village-economy news, and the final performer identity; two imperfect early branches are corrected by later targeted delegation.</div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-num">#2 · Strong with sub-agent blemishes · Chinese · redsearcher Entry 10</div>
+      <div class="pick-title"><a href="strong_with_sub_agent_blemishes/redsearcher_pick_10.html">State-owned forest farm area verified through cross-province forestry clues</a></div>
+      <div class="pick-q">要确定一个省级直管国有林场的经营总面积，需要先解决以下连环问题：首先，在云贵高原上、不与任何国家接壤的那个省份里，找出一个县级林业单位，该单位管护面积中包含14.4万亩生态公益林；其次，基于‘同一经营活动关联两个不同省份林场’的线索，找到黄土高原上、与内蒙古、河北、河南、陕西接壤的省份中，那个同样涉及此项经营（总20.2万亩，含14.4万亩生态公益林和5.8万亩商品林）的国有林场，该林场还满足：入选第二批全国森林可持续经营试点典型案例、森林覆盖率87.6%...</div>
+      <div class="pick-stats">6 called sub-agents · completed: 5, token_limit: 1 · 11 flow nodes · answer: 48.41万亩 · A small number of incomplete sub-results are resolved by later delegation and an official forestry-page visit.</div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-num">#3 · Strong with sub-agent blemishes · Chinese · redsearcher Entry 12</div>
+      <div class="pick-title"><a href="strong_with_sub_agent_blemishes/redsearcher_pick_12.html">Modern Chinese military figure verified with birthplace, academy, battle, and date checks</a></div>
+      <div class="pick-q">哪一位中国近代军事人物，其出生地是中国东部某省的一个县，该县的建制可追溯到唐朝开国皇帝登基后的第六年发生的一次行政合并；他早年毕业于一所在中国近代史上具有重要地位的军事院校的特定期次（第三期）；并且，在抗日战争全面爆发后的第29天，他参与了一场以中国军队成功击退日军多次进攻而闻名的关键战役？请基于这些交织的时空与事件属性线索来确定这位人物。</div>
+      <div class="pick-stats">8 called sub-agents · completed: 7, token_limit: 1 · 17 flow nodes · answer: 张本禹 · One sub-agent reaches token limit, but the main agent performs source visits and Python date arithmetic to verify the chain before answering.</div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-num">#4 · Strong with sub-agent blemishes · Chinese · redsearcher Entry 14</div>
+      <div class="pick-title"><a href="strong_with_sub_agent_blemishes/redsearcher_pick_14.html">Record heat year verified through WMO, Rio weather system, flood, and civil-defense clues</a></div>
+      <div class="pick-q">有一个特定的年份，它被一个发布全球气候报告并坚定支持《巴黎协定》目标的权威国际组织在其官方记录中标记为全球性创纪录高温事件的发生时间，该事件被归因于显著的温室气体浓度异常。同年，在一座南美大都市——其气象监测系统以该城市命名——该系统报告了此次高温事件中的一个极端数据点，如单日最高气温和热指数。有趣的是，这个同一套气象系统，在巴黎协定生效前约六年，还为该城市一起造成数十人丧生的特大暴雨灾害提供了关键数据支持，那场灾害以破纪录的24小时降雨量著称，而灾害的应...</div>
+      <div class="pick-stats">9 called sub-agents · completed: 8, error: 1 · 13 flow nodes · answer: 2024年 · One early sub-agent follows a wrong São Paulo branch, but later sub-agents and the main report verify WMO's 2024 record, Alerta Rio heat records, the 2010 Rio flood, and civil-defense radar context.</div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-num">#5 · Strong with sub-agent blemishes · Chinese · redsearcher Entry 17</div>
+      <div class="pick-title"><a href="strong_with_sub_agent_blemishes/redsearcher_pick_17.html">Shenzhen district identified through Tokyo TOD, CHTF, and industrial-upstairs policy clues</a></div>
+      <div class="pick-q">有一个位于东京都与一位已故动画美术导演同名的特别区内的站城一体化开发项目，其建设与一项吉祥物名为Miraitowa的全球性体育盛会的筹备推动直接相关，且该区域也是一家以培养高颜值女性新闻主播而闻名的经纪公司总部所在地。请基于此案例，在中国境内寻找另一个同样开发面积超过100万平方米的在建或规划大型项目（非体育场馆）。关键的是，这个中国项目所在的行政区划必须同时满足：在约2024年初，发生了其所属城市‘首个集中连片区域地块出让’事件；并且，在该行政区划所在城...</div>
+      <div class="pick-stats">9 called sub-agents · completed: 8, token_limit: 1 · 11 flow nodes · answer: 深圳市龙华区 · One sub-agent reaches token limit after already identifying the Shibuya station-city redevelopment; the main report and other sub-agents still verify every required constraint, including the Tokyo anchor, the &gt;1M sqm Shenzhen project, the 2024 land-transfer event, the CHTF year calculation, and the district-level industrial-upstairs policy.</div>
+    </div>
+</div><div class="section-title">主 agent 超长强制回答样本 / Main token-limit forced answer</div>
+<div class="picks">
+    <div class="pick-card">
+      <div class="pick-num">#1 · Main token-limit forced answer · English · redsearcher Entry 27</div>
+      <div class="pick-title"><a href="main_token_limit_forced_answer/redsearcher_pick_27.html">Wrestling title identified after forced finalization</a></div>
+      <div class="pick-q">Which specific wrestling title was held by the competitor who popularized a particular submission hold involving a cross-leg configuration, and who, during a regional tour stop in a large Great Lakes metropolitan area in the early...</div>
+      <div class="pick-stats">20 called sub-agents · completed: 11, error: 4, token_limit: 5 · 20 flow nodes · answer: NWA World Heavyweight Championship · The main agent is forced to stop by the token-limit instruction but still returns the correct title. The sub-agents cover the submission hold, Buddy Rogers, Pat O'Connor, Great Lakes title-change candidates, mentor hypotheses, and alternative wrestling branches.</div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-num">#2 · Main token-limit forced answer · English · openseeker Entry 3</div>
+      <div class="pick-title"><a href="main_token_limit_forced_answer/openseeker_pick_3.html">Artist identified after forced finalization through Montparnasse and atelier clues</a></div>
+      <div class="pick-q">Identify the individual whose initial artistic recognition occurred via a watercolor displayed at a late 19th-century international exposition in the capital of their non-European birthplace. Their mature practice synthesized the ...</div>
+      <div class="pick-stats">20 called sub-agents · completed: 7, error: 2, token_limit: 11 · 22 flow nodes · answer: Tsuguharu Foujita · The main agent is forced to stop by the token-limit instruction and returns the correct entity. The sub-agents split the art-history clues across Kiki de Montparnasse, Foujita, La Ruche, Soutine, Place Léon-Paul-Fargue, exposition evidence, and stylistic influence checks.</div>
+    </div>
+</div>
+</div>
+</body>
+</html>

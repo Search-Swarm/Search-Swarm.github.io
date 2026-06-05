@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>样本筛选标准</title>
+<style>
+:root {
+  --bg: #fafaf9;
+  --card: #fff;
+  --ink: #1a1a1a;
+  --muted: #666;
+  --border: #d4d4d4;
+  --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.6;
+}
+.wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+h1 { font-size: 28px; margin: 0 0 8px; }
+.subtitle { color: var(--muted); margin-bottom: 28px; font-size: 15px; }
+.top-links { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0 30px; }
+.top-links a { color: #1d4ed8; text-decoration: none; font-weight: 600; }
+.section-title { font-size: 20px; font-weight: 700; margin: 34px 0 14px; }
+.picks { display: flex; flex-direction: column; gap: 18px; }
+.pick-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 5px solid #2563eb;
+  border-radius: 10px;
+  padding: 22px 26px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.pick-num { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.pick-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.pick-title a { color: var(--ink); text-decoration: none; }
+.pick-title a:hover { color: var(--accent); }
+.pick-q { font-style: italic; color: var(--muted); margin-bottom: 12px; font-size: 14px; }
+.pick-stats { font-size: 13px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+.note { background: #f9fafb; border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-top: 28px; font-size: 14px; color: var(--muted); }
+
+.criteria { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 24px 28px; }
+.criteria h2 { margin-top: 26px; font-size: 20px; }
+.criteria h3 { margin-top: 20px; font-size: 16px; }
+.criteria p, .criteria li { font-size: 15px; }
+.criteria code { background: #f4f4f4; padding: 2px 5px; border-radius: 4px; }
+.criteria table { border-collapse: collapse; width: 100%; margin: 12px 0 18px; font-size: 14px; }
+.criteria th, .criteria td { border: 1px solid var(--border); padding: 8px 10px; vertical-align: top; text-align: left; }
+.criteria th { background: #f9fafb; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>样本筛选标准</h1>
+  <div class="subtitle"><a href="index.html">返回样本总览</a></div>
+  <div class="criteria">
+    <h2>筛选目标</h2>
+    <p>这批页面的目标不是随机展示样本，而是筛出最能说明“主 agent 协调多个子 agent 完成复杂搜索任务”这一方案合理性的轨迹。筛选时优先考虑主子 agent 分工是否清楚、最终答案是否正确、证据链是否被主 agent 汇总和修复，而不是单纯追求轨迹最长或子任务最多。</p>
+
+    <h2>主子轨迹匹配规则</h2>
+    <p>每个子 agent 页面都必须通过精确的 <code>(question, goal)</code> 二元组匹配到主轨迹。也就是说，子轨迹里的 <code>question</code> 必须和主 agent 的问题完全一致，子轨迹里的 <code>goal</code> 必须来自主轨迹中实际发出的 <code>call_sub_agent</code> prompt 列表。只按 <code>question</code> 匹配是不够的，因为同一个问题下可能有很多不同子任务；只按 <code>goal</code> 匹配也不够安全，因为不同问题可能出现相似目标。</p>
+    <p>生成时会做强校验：如果某个实际 goal 找不到对应子轨迹，或者同一个 <code>(question, goal)</code> 匹配到多条子轨迹，脚本会直接失败，不会生成可能错配的页面。</p>
+
+    <h2>硬性过滤条件</h2>
+    <ul>
+      <li>所有样本都必须通过精确的 <code>(question, goal)</code> 匹配，不能错配子 agent 轨迹。</li>
+      <li>最终答案必须和参考答案一致；如果是缩写、大小写、标点、别名或括号补充信息差异，必须能明确说明语义等价。</li>
+      <li>前两档主 agent 必须正常结束，即 <code>termination = answer</code>，并且题面关键约束必须能在主 agent 最终解释或某个子 agent 报告中找到对应验证。</li>
+      <li>第三档是专门展示强制回答机制的例外，要求 <code>termination = generate an answer as token limit reached (rolled back)</code> 且最终答案正确；这类样本允许存在少量未完全闭合的约束，但必须在页面说明中明确标注，不能作为“完美证据闭合”样本使用。</li>
+      <li>轨迹必须包含有意义的子 agent 分工；如果过短且过简单、看不出协作价值，则不作为核心展示。</li>
+      <li>前两档即使答案正确，如果主要过程依赖大量错误候选、反复否定、多个子 agent 失败或大面积 <code>token_limit</code>，也不进入展示集；第三档会保留这些状态用于说明 forced-answer 边界行为。</li>
+    </ul>
+
+    <h2>样本分档</h2>
+    <h3>核心干净样本</h3>
+    <p>这是最严格的一档：主 agent 正常结束、答案正确、所有实际调用到的子 agent 都是 <code>status = completed</code>，并且子任务拆分足够清楚，能直接看出主子 agent 协作的价值。</p>
+
+    <h3>强协作样本（含子 agent 瑕疵）</h3>
+    <p>这一档的主 agent 仍然必须正常结束且答案正确，但允许少量子 agent 出现 <code>token_limit</code> 或无可用内容/error。这里的“瑕疵”只指子 agent 的执行状态或局部检索不完整，不代表题面约束可以缺失。只有当主 agent 通过后续子任务、直接访问来源、计算校验或显式交叉验证把这些瑕疵补上，并且所有关键约束都能在轨迹中找到对应证据时，样本才会被保留。注意：这一档也不允许主 agent 超长回滚。</p>
+
+    <h3>主 agent 超长强制回答样本</h3>
+    <p>这一档用于展示系统在主 agent 触发上下文或轮次限制后，如何插入强制收尾指令，要求模型停止工具调用并输出 <code>&lt;explanation&gt;</code> 与 <code>&lt;answer&gt;</code>。这一档的最终答案必须正确，但不要求达到前两档的“完美证据闭合”标准；页面中会保留并展示子 agent 的 <code>error</code>、<code>token_limit</code> 或 <code>max_calls</code> 瑕疵，读者可以看到强制回答机制是在什么样的长轨迹尾部发生的。</p>
+
+    <h2>入选样本列表</h2>
+    <table>
+      <thead><tr><th>分档</th><th>条目</th><th>语言</th><th>实际调用子 agent 数</th><th>子 agent 状态统计</th><th>入选原因</th></tr></thead>
+      <tbody><tr><td>核心干净样本</td><td>redsearcher 0</td><td>中文</td><td>6</td><td>completed（正常完成）: 6</td><td>两轮子 agent 分工验证 SBS 开播年份、政治党派、议会文件编号、基金会主体等独立线索；6 个实际调用的子 agent 全部正常完成。</td></tr>
+<tr><td>核心干净样本</td><td>redsearcher 2</td><td>英文</td><td>8</td><td>completed（正常完成）: 8</td><td>8 个子 agent 分别拆解铁路工人俱乐部、世界杯预选赛、裁判经历、球员效力时间线等体育史线索，主 agent 最后汇总到同一名球员。</td></tr>
+<tr><td>核心干净样本</td><td>redsearcher 6</td><td>英文</td><td>5</td><td>completed（正常完成）: 5</td><td>5 个子 agent 分别验证澳洲公路项目、原 corridor 名称、铁路项目、承包商和州长资金承诺，证据收敛清楚。</td></tr>
+<tr><td>强协作样本（含子 agent 瑕疵）</td><td>redsearcher 3</td><td>中文</td><td>6</td><td>completed（正常完成）: 4；token_limit（子任务超长收尾）: 2</td><td>6 个子 agent 分别验证 1925 年 2 月东征月份、特克斯县与 tex 词源、阔克铁热克“黑森林”含义、2025 年村集体经济增收 82 万元、马金福的回族民间艺人身份以及其在特克斯县外贸局工作至 1985 年退休的经历。虽然两个早期分支超长或未命中，但后续子 agent 和主报告把题面约束完整闭合。</td></tr>
+<tr><td>强协作样本（含子 agent 瑕疵）</td><td>redsearcher 10</td><td>中文</td><td>6</td><td>completed（正常完成）: 5；token_limit（子任务超长收尾）: 1</td><td>少量子结果不完整，但后续子 agent 和主 agent 官方林草页面访问确认了省级直管国有林场及经营面积。</td></tr>
+<tr><td>强协作样本（含子 agent 瑕疵）</td><td>redsearcher 12</td><td>中文</td><td>8</td><td>completed（正常完成）: 7；token_limit（子任务超长收尾）: 1</td><td>1 个子 agent 超长收尾，但主 agent 后续访问来源并用 Python 做日期计算，验证出生地、黄埔军校期次、南口战役日期等关键链条。</td></tr>
+<tr><td>强协作样本（含子 agent 瑕疵）</td><td>redsearcher 14</td><td>中文</td><td>9</td><td>completed（正常完成）: 8；error（无可用内容或执行失败）: 1</td><td>1 个早期子 agent 走到错误城市分支，但后续子 agent 和主报告完整验证 WMO 2024 纪录、Alerta Rio 高温数据、2010 年里约暴雨、民防响应与雷达投入等约束。</td></tr>
+<tr><td>强协作样本（含子 agent 瑕疵）</td><td>redsearcher 17</td><td>中文</td><td>9</td><td>completed（正常完成）: 8；token_limit（子任务超长收尾）: 1</td><td>1 个子 agent 在已经定位涩谷站城一体化再开发后超长收尾；其余子 agent 与主报告继续覆盖所有题面约束：涩谷区与已故动画美术导演同名、Miraitowa/东京奥运推动站城开发、cent. FORCE 总部、龙华区内超过 100 万平方米项目、2024 年深圳首个集中连片区域地块出让、高交会 1999 年首办与第 24 年计算、以及龙华区首个区级工业上楼企业入驻细则。</td></tr>
+<tr><td>主 agent 超长强制回答样本</td><td>redsearcher 27</td><td>英文</td><td>20</td><td>completed（正常完成）: 11；error（无可用内容或执行失败）: 4；token_limit（子任务超长收尾）: 5</td><td>主 agent 在触发 token-limit 强制收尾后给出正确答案 NWA World Heavyweight Championship。20 个子 agent 分别查 Figure Four Leg Lock、Buddy Rogers、Pat O'Connor、Chicago/Great Lakes title change、Karl Gotch/Funk/Ric Flair/Sting 等候选链条。该样本用于展示强制回答机制，不作为完美证据闭合样本，因为若干子 agent error/token_limit，且最终报告承认一个数值约束未完全验证。</td></tr>
+<tr><td>主 agent 超长强制回答样本</td><td>openseeker 3</td><td>英文</td><td>20</td><td>completed（正常完成）: 7；error（无可用内容或执行失败）: 2；token_limit（子任务超长收尾）: 11</td><td>主 agent 在触发 token-limit 强制收尾后给出语义正确答案 Tsuguharu Foujita。20 个子 agent 分别查 Kiki de Montparnasse 回忆录序言、Foujita、La Ruche、Soutine、Place Léon-Paul-Fargue、早期展览和风格影响等线索。该样本用于展示强制回答机制，不作为完美证据闭合样本，因为若干子 agent error/token_limit，且最终报告把两个艺术史线索标为较弱。</td></tr></tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SearchSwarm: Delegation Intelligence for Long-Horizon Deep Research</title>
+  <meta name="description" content="SearchSwarm teaches agentic LLMs delegation intelligence for long-horizon deep research with harness-guided supervised fine-tuning.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --paper: #ffffff;
+      --ink: #102033;
+      --muted: #5e6b7d;
+      --soft: #e7eef7;
+      --line: #d7e3f1;
+      --blue: #1788f2;
+      --blue-dark: #0f5fb8;
+      --cyan: #55c8e8;
+      --coral: #f28c95;
+      --green: #74c476;
+      --shadow: 0 18px 45px rgba(16, 32, 51, 0.08);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: var(--blue-dark);
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .page {
+      overflow: hidden;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 42px 0 36px;
+      background:
+        linear-gradient(180deg, rgba(23, 136, 242, 0.08), rgba(248, 250, 252, 0) 44%),
+        var(--bg);
+    }
+
+    .hero-card {
+      position: relative;
+      padding: 34px 34px 26px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .brand-logo {
+      width: 62px;
+      height: 62px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(16, 32, 51, 0.14);
+    }
+
+    .brand-name {
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      font-size: clamp(2.1rem, 4.4vw, 3.1rem);
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 900px;
+      margin: 4px auto 0;
+      font-size: clamp(1.4rem, 2.7vw, 2.3rem);
+      font-weight: 700;
+      color: #20374f;
+    }
+
+    .subtitle {
+      max-width: 680px;
+      margin: 16px auto 0;
+      color: var(--muted);
+      font-size: 1.04rem;
+      text-align: left;
+    }
+
+    .authors {
+      margin-top: 20px;
+      color: #2c4a68;
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      font-size: 1.16rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 42px;
+      align-items: center;
+      gap: 9px;
+      padding: 0 18px;
+      border-radius: 999px;
+      background: #101827;
+      color: #fff;
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      font-size: 0.94rem;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(16, 24, 39, 0.16);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .button:hover {
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(16, 24, 39, 0.2);
+    }
+
+    .button.is-muted {
+      background: #eef5fc;
+      color: #36506c;
+      box-shadow: none;
+      border: 1px solid var(--line);
+    }
+
+    .claim-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 30px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .claim {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 16px 16px 17px;
+      background: #f7fbff;
+      border: 1px solid #e0ecf8;
+      border-radius: 12px;
+    }
+
+    .claim-icon {
+      position: relative;
+      display: inline-flex;
+      width: 42px;
+      height: 42px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #c9e6fb;
+      border-radius: 12px;
+      color: var(--blue);
+      background: #f4fbff;
+      font-size: 1.1rem;
+    }
+
+    .svg-icon {
+      width: 1.05em;
+      height: 1.05em;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: none;
+    }
+
+    .claim-icon .svg-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: block;
+      width: 21px;
+      height: 21px;
+      margin: 0;
+      overflow: visible;
+      transform: translate(-50%, -50%);
+    }
+
+    .claim strong {
+      display: block;
+      color: var(--blue-dark);
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      font-size: 0.98rem;
+      line-height: 1.25;
+    }
+
+    .claim span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    section {
+      padding: 34px 0;
+    }
+
+    .section-card {
+      padding: 30px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 32px rgba(16, 32, 51, 0.055);
+    }
+
+    .section-head {
+      margin-bottom: 22px;
+    }
+
+    .section-head h2 {
+      font-size: clamp(1.55rem, 2.4vw, 2.15rem);
+    }
+
+    .section-head p {
+      width: 100%;
+      max-width: none;
+      margin: 10px 0 0;
+      padding-left: 14px;
+      border-left: 3px solid var(--cyan);
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.55;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .metric {
+      padding: 20px;
+      background: linear-gradient(180deg, #ffffff, #f7fbff);
+      border: 1px solid #cfe3f6;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .metric .name {
+      color: #30445b;
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .metric .value {
+      margin-top: 8px;
+      color: var(--blue);
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      font-size: clamp(2rem, 4.6vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .metric .note {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .overview-grid {
+      display: grid;
+      gap: 18px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .method-lower {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      align-items: stretch;
+    }
+
+    .figure-frame {
+      padding: 14px;
+      background: #fbfdff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .figure-frame img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .caption {
+      margin: 12px 2px 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .principle {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      padding: 14px;
+      background: #f7fbff;
+      border: 1px solid #d9e9f8;
+      border-radius: 12px;
+    }
+
+    .principle b {
+      display: inline-grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+    }
+
+    .principle strong {
+      display: block;
+      color: var(--blue-dark);
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      line-height: 1.25;
+    }
+
+    .principle span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.48;
+    }
+
+    .benchmark-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .benchmark-grid {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    .benchmark-grid .figure-frame {
+      padding: 10px 22px;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      background: #fff;
+    }
+
+    .compact-table table {
+      min-width: 0;
+      table-layout: fixed;
+      font-size: 0.78rem;
+    }
+
+    .compact-table th,
+    .compact-table td {
+      padding: 9px 8px;
+      white-space: normal;
+      line-height: 1.3;
+    }
+
+    .compact-table th:first-child,
+    .compact-table td:first-child {
+      width: 34%;
+    }
+
+    .compact-table th:not(:first-child),
+    .compact-table td:not(:first-child) {
+      width: 13.2%;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e6edf5;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+    }
+
+    thead th {
+      background: linear-gradient(180deg, #eaf4ff, #dcecff);
+      color: #24364b;
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      font-weight: 800;
+    }
+
+    .group-row td {
+      background: #f1f5f9;
+      color: #536275;
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .ours td {
+      background: #e8f4ff;
+      color: #0c3767;
+      font-weight: 800;
+      border-top: 2px solid #9ed0fb;
+      border-bottom: 2px solid #9ed0fb;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    #generalization .split {
+      grid-template-columns: 1fr;
+    }
+
+    .callout {
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #f9fcff;
+    }
+
+    .callout .callout-icon {
+      display: inline-grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      border-radius: 14px;
+      color: var(--blue);
+      background: #ecf7ff;
+    }
+
+    .callout .svg-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .callout h3 {
+      color: var(--blue-dark);
+      font-size: 1.06rem;
+    }
+
+    .callout p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .case-directory {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 26px;
+    }
+
+    .case-group {
+      min-width: 0;
+    }
+
+    .case-group h3 {
+      color: #24364b;
+      font-size: 1.04rem;
+    }
+
+    .case-group > p {
+      margin: 6px 0 12px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .case-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .case-group.short-answer .case-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .case-link {
+      display: block;
+      min-height: 92px;
+      padding: 14px 16px;
+      border: 1px solid #d7e8f8;
+      border-radius: 8px;
+      background: #f8fcff;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .case-link:hover {
+      background: #eef8ff;
+      border-color: #a9d5f9;
+      transform: translateY(-1px);
+    }
+
+    .case-title {
+      display: block;
+      color: var(--ink);
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.28;
+    }
+
+    .case-desc {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .usage-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .usage-grid img {
+      width: 100%;
+    }
+
+    .bibtex {
+      margin: 0;
+      padding: 18px;
+      overflow-x: auto;
+      border: 1px solid #cbd7e5;
+      border-radius: 10px;
+      background: #f5f8fb;
+      color: #24364b;
+      font-family: "Roboto Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      white-space: pre;
+    }
+
+    footer {
+      padding: 24px 0 36px;
+      color: #7a8798;
+      text-align: center;
+      font-size: 0.84rem;
+    }
+
+    @media (max-width: 860px) {
+      .container {
+        width: min(100% - 28px, 1120px);
+      }
+
+      .hero-card,
+      .section-card {
+        padding: 22px;
+      }
+
+      .claim-row,
+      .metrics,
+      .overview-grid,
+      .method-lower,
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head p {
+        max-width: none;
+      }
+
+      #generalization .split {
+        grid-template-columns: 1fr;
+      }
+
+      .benchmark-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .case-directory {
+        grid-template-columns: 1fr;
+      }
+
+      .case-list,
+      .case-group.short-answer .case-list {
+        grid-template-columns: 1fr;
+      }
+
+      .principles {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .hero {
+        padding-top: 22px;
+      }
+
+      .brand-logo {
+        width: 50px;
+        height: 50px;
+      }
+
+      .brand-name {
+        font-size: 2rem;
+      }
+
+      h1 {
+        font-size: 1.3rem;
+      }
+
+      .subtitle {
+        font-size: 0.98rem;
+      }
+
+      .links {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .button {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .claim {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .claim-icon {
+        margin: 0 auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;">
+    <symbol id="icon-file" viewBox="0 0 24 24">
+      <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"></path>
+      <path d="M14 2v5h5"></path>
+      <path d="M9 13h6"></path>
+      <path d="M9 17h4"></path>
+    </symbol>
+    <symbol id="icon-code" viewBox="0 0 24 24">
+      <path d="m8 9-4 3 4 3"></path>
+      <path d="m16 9 4 3-4 3"></path>
+      <path d="m14 5-4 14"></path>
+    </symbol>
+    <symbol id="icon-cube" viewBox="0 0 24 24">
+      <path d="m21 16-9 5-9-5V8l9-5 9 5z"></path>
+      <path d="m3 8 9 5 9-5"></path>
+      <path d="M12 13v8"></path>
+    </symbol>
+    <symbol id="icon-database" viewBox="0 0 24 24">
+      <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+      <path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path>
+      <path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"></path>
+    </symbol>
+    <symbol id="icon-project" viewBox="0 0 24 24">
+      <circle cx="6" cy="6" r="3"></circle>
+      <circle cx="18" cy="6" r="3"></circle>
+      <circle cx="12" cy="18" r="3"></circle>
+      <path d="M8.6 7.5 10.7 15"></path>
+      <path d="m15.4 7.5-2.1 7.5"></path>
+      <path d="M9 18h6"></path>
+    </symbol>
+    <symbol id="icon-route" viewBox="0 0 24 24">
+      <circle cx="6" cy="19" r="3"></circle>
+      <circle cx="18" cy="5" r="3"></circle>
+      <path d="M9 19h3a4 4 0 0 0 4-4v-2"></path>
+      <path d="M16 13V8"></path>
+    </symbol>
+    <symbol id="icon-trophy" viewBox="0 0 24 24">
+      <path d="M8 21h8"></path>
+      <path d="M12 17v4"></path>
+      <path d="M7 4h10v5a5 5 0 0 1-10 0z"></path>
+      <path d="M17 5h3v2a4 4 0 0 1-4 4"></path>
+      <path d="M7 5H4v2a4 4 0 0 0 4 4"></path>
+    </symbol>
+    <symbol id="icon-star" viewBox="0 0 24 24">
+      <path d="m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2-5.7-3-5.7 3 1.1-6.2-4.5-4.4 6.3-.9z"></path>
+    </symbol>
+  </svg>
+  <main class="page">
+    <section class="hero">
+      <div class="container">
+        <div class="hero-card">
+          <div class="brand">
+            <img class="brand-logo" src="static/images/logo.jpg" alt="">
+            <span class="brand-name">SearchSwarm</span>
+          </div>
+          <h1>Towards Delegation Intelligence in Agentic LLMs for Long-Horizon Deep Research</h1>
+          <p class="subtitle">Real tasks can grow almost unbounded, yet a model's context is finite. We teach agentic LLMs <em>delegation intelligence</em>: to decompose a long-horizon task, delegate bounded subtasks to its own subagents, and integrate their condensed, evidence-grounded results, an active form of context management that lets a single model take on far more than its context alone allows.</p>
+
+          <div class="authors">
+            <span>SearchSwarm Team</span>
+          </div>
+
+          <div class="links" aria-label="Project links">
+            <a class="button" href="#" aria-label="Paper link placeholder">
+              <svg class="svg-icon"><use href="#icon-file"></use></svg>
+              <span>Paper</span>
+            </a>
+            <a class="button" href="#" aria-label="Code repository">
+              <svg class="svg-icon"><use href="#icon-code"></use></svg>
+              <span>Code</span>
+            </a>
+            <a class="button is-muted" href="#" aria-label="Model link placeholder">
+              <svg class="svg-icon"><use href="#icon-cube"></use></svg>
+              <span>Model</span>
+            </a>
+            <a class="button is-muted" href="#" aria-label="Dataset link placeholder">
+              <svg class="svg-icon"><use href="#icon-database"></use></svg>
+              <span>Dataset</span>
+            </a>
+          </div>
+
+          <div class="claim-row">
+            <div class="claim">
+              <span class="claim-icon">
+                <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="6.5" r="2.4"></circle>
+                  <circle cx="6.8" cy="17" r="2.4"></circle>
+                  <circle cx="17.2" cy="17" r="2.4"></circle>
+                  <path d="M10.6 8.6 8.1 14.8"></path>
+                  <path d="m13.4 8.6 2.5 6.2"></path>
+                  <path d="M9.2 17h5.6"></path>
+                </svg>
+              </span>
+              <div>
+                <strong>Delegation as active context management</strong>
+                <span>A single model delegates bounded subtasks to subagents that explore in their own contexts and return only condensed, evidence-grounded results, keeping the main context clean for high-level reasoning.</span>
+              </div>
+            </div>
+            <div class="claim">
+              <span class="claim-icon">
+                <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="7" cy="17" r="2.6"></circle>
+                  <circle cx="17" cy="7" r="2.6"></circle>
+                  <path d="M9.6 17h3.1a4.3 4.3 0 0 0 4.3-4.3V9.6"></path>
+                </svg>
+              </span>
+              <div>
+                <strong>High-quality delegation SFT data</strong>
+                <span>We synthesize and release fine-tuning trajectories that teach a model when to delegate, how to brief a subagent, and how to verify what comes back.</span>
+              </div>
+            </div>
+            <div class="claim">
+              <span class="claim-icon">
+                <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8.2 5.4h7.6v4.1a3.8 3.8 0 0 1-7.6 0z"></path>
+                  <path d="M15.8 6.4h2.5v1.3a3.1 3.1 0 0 1-2.9 3.1"></path>
+                  <path d="M8.2 6.4H5.7v1.3a3.1 3.1 0 0 0 2.9 3.1"></path>
+                  <path d="M12 13.4v3.8"></path>
+                  <path d="M8.8 18.6h6.4"></path>
+                </svg>
+              </span>
+              <div>
+                <strong>30B-A3B SOTA</strong>
+                <span>SearchSwarm tops same-scale models on BrowseComp, BrowseComp-ZH, GAIA, and xbench-DeepSearch.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="benchmarks">
+      <div class="container">
+        <div class="section-card">
+          <div class="section-head">
+            <h2>Benchmark Comparisons</h2>
+            <p>SearchSwarm is the state-of-the-art model at the 30B scale, across all four benchmarks.</p>
+          </div>
+          <div class="benchmark-grid">
+            <div class="figure-frame"><img src="static/images/bc.png" alt="BrowseComp benchmark comparison"></div>
+            <div class="figure-frame"><img src="static/images/bc_zh.png" alt="BrowseComp-ZH benchmark comparison"></div>
+            <div class="figure-frame"><img src="static/images/gaia.png" alt="GAIA benchmark comparison"></div>
+            <div class="figure-frame"><img src="static/images/xbench.png" alt="xbench-DeepSearch benchmark comparison"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="case-studies">
+      <div class="container">
+        <div class="section-card">
+          <div class="section-head">
+            <h2>Demo</h2>
+            <p>Examples below illustrate how SearchSwarm delegates, gathers evidence, and synthesizes final answers across different research workflows.</p>
+          </div>
+          <div class="case-directory">
+            <div class="case-group">
+              <h3>Open-Ended Deep Research</h3>
+              <p>Three long-form synthesis cases with source-grounded reports.</p>
+              <div class="case-list">
+                <a class="case-link" href="case_studies/drb/drb_pick_34.html">
+                  <span class="case-title">Horizontal Gene Transfer in Plants and Animals</span>
+                  <span class="case-desc">A broad scientific synthesis on eukaryotic HGT, mechanisms, rarity, and evolutionary significance.</span>
+                </a>
+                <a class="case-link" href="case_studies/drb/drb_pick_91.html">
+                  <span class="case-title">Light-Based Aesthetic Medicine</span>
+                  <span class="case-desc">A 2020-2026 survey of laser, IPL, and LED therapies for photoaging and pigmentation.</span>
+                </a>
+                <a class="case-link" href="case_studies/drb/drb_pick_66.html">
+                  <span class="case-title">脑缺血中的中性粒细胞功能演变</span>
+                  <span class="case-desc">急慢性期功能变化、免疫细胞互作、临床结局与未来工作。</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="case-group short-answer">
+              <h3>Short-Answer Deep Research</h3>
+              <p>Eight short-answer cases that require multi-hop evidence gathering before returning a concise final answer.</p>
+              <div class="case-list">
+                <a class="case-link" href="case_studies/selected_agent_cases/core_clean/redsearcher_pick_2.html">
+                  <span class="case-title">Lokomotiv Moscow Qualifier Chain</span>
+                  <span class="case-desc">An English sports-fact puzzle connecting club history, World Cup qualification, refereeing, and player records.</span>
+                </a>
+                <a class="case-link" href="case_studies/selected_agent_cases/core_clean/redsearcher_pick_6.html">
+                  <span class="case-title">Coomera Connector Infrastructure Chain</span>
+                  <span class="case-desc">An English infrastructure puzzle linking state funding, motorway opening, rail construction, and project naming.</span>
+                </a>
+                <a class="case-link" href="case_studies/selected_agent_cases/main_token_limit_forced_answer/openseeker_pick_3.html">
+                  <span class="case-title">Foujita and Montparnasse Art-History Triangulation</span>
+                  <span class="case-desc">A relational art-history search across exhibitions, artist influences, memoirs, and Paris atelier geography.</span>
+                </a>
+                <a class="case-link" href="case_studies/selected_agent_cases/main_token_limit_forced_answer/redsearcher_pick_27.html">
+                  <span class="case-title">Wrestling Holds and Great Lakes Title History</span>
+                  <span class="case-desc">A long-chain sports-history case covering submission holds, trainers, territories, and championship timelines.</span>
+                </a>
+                <a class="case-link" href="case_studies/selected_agent_cases/core_clean/redsearcher_pick_0.html">
+                  <span class="case-title">Advance Australia Foundation 档案识别</span>
+                  <span class="case-desc">围绕 SBS、议会文件编号、许可记录与政府资助的多跳检索。</span>
+                </a>
+                <a class="case-link" href="case_studies/selected_agent_cases/strong_with_sub_agent_blemishes/redsearcher_pick_14.html">
+                  <span class="case-title">WMO、Alerta Rio 与灾害响应年份</span>
+                  <span class="case-desc">串联 WMO 全球高温记录、里约 Alerta Rio 气象监测系统和城市应急响应机构。</span>
+                </a>
+                <a class="case-link" href="case_studies/selected_agent_cases/strong_with_sub_agent_blemishes/redsearcher_pick_17.html">
+                  <span class="case-title">东京到深圳的城市开发线索</span>
+                  <span class="case-desc">串联东京站城一体化开发、深圳集中连片地块出让和高层工业厂房入驻政策。</span>
+                </a>
+                <a class="case-link" href="case_studies/selected_agent_cases/strong_with_sub_agent_blemishes/redsearcher_pick_3.html">
+                  <span class="case-title">新疆花儿民间音乐人物线索</span>
+                  <span class="case-desc">串联出生年代、东征历史、特克斯县地名和回族花儿表演者身份。</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="method">
+      <div class="container">
+        <div class="section-card">
+          <div class="section-head">
+            <h2>SearchSwarm Framework</h2>
+            <p>The main agent owns the research mainline: it decomposes the question, delegates bounded evidence-gathering to subagents, and integrates the condensed, source-grounded reports they return.</p>
+          </div>
+          <div class="overview-grid">
+            <div>
+              <div class="figure-frame">
+                <img src="static/images/main-overview.png" alt="SearchSwarm architecture and execution flow">
+              </div>
+              <p class="caption">SearchSwarm at a glance. The main agent dispatches bounded subtasks to subagents that run in their own fresh contexts and return condensed, cited reports, which re-enter the main agent's context for verification and synthesis.</p>
+            </div>
+            <div class="method-lower">
+              <div class="principles">
+                <div class="principle">
+                  <b>1</b>
+                  <div>
+                    <strong>Encourage delegation</strong>
+                    <span>Every token spent on raw retrieval is one not spent on reasoning, so the harness pushes the main agent to delegate multi-step gathering and reserve its context for decomposition, verification, and synthesis.</span>
+                  </div>
+                </div>
+                <div class="principle">
+                  <b>2</b>
+                  <div>
+                    <strong>Comprehensive briefing</strong>
+                    <span>The main agent briefs each subagent like a new collaborator: not just the subtask, but why it matters, what is already established, and what is still uncertain, so the subagent works on target without re-treading settled ground.</span>
+                  </div>
+                </div>
+                <div class="principle">
+                  <b>3</b>
+                  <div>
+                    <strong>Main agent retains core judgment</strong>
+                    <span>Subagents gather; the main agent decides. It checks each finding against its sources, adjudicates conflicts, and chooses which hypotheses to pursue or drop.</span>
+                  </div>
+                </div>
+                <div class="principle">
+                  <b>4</b>
+                  <div>
+                    <strong>Citation-grounded reporting</strong>
+                    <span>Every subagent conclusion carries inline citations to its sources, and the main agent propagates them into a final answer whose explanation is traceable end to end.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="table">
+      <div class="container">
+        <div class="section-card">
+          <div class="section-head">
+            <h2>Performance Table</h2>
+            <p>Baseline results are collected from respective technical reports or model cards. An asterisk indicates results with context management.</p>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Size</th>
+                  <th>BrowseComp</th>
+                  <th>BrowseComp-ZH</th>
+                  <th>GAIA</th>
+                  <th>xbench-DeepSearch-2505</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="group-row"><td colspan="6">Closed-source models</td></tr>
+                <tr><td>GPT-5.2-Thinking</td><td>--</td><td>65.8</td><td>76.1</td><td>--</td><td>--</td></tr>
+                <tr><td>GPT-5</td><td>--</td><td>54.9</td><td>65.0</td><td>76.4</td><td>77.8</td></tr>
+                <tr><td>Claude-4.5-Opus</td><td>--</td><td>67.8</td><td>62.4</td><td>71.5</td><td>--</td></tr>
+                <tr><td>Claude-4.5-Sonnet</td><td>--</td><td>24.1</td><td>42.4</td><td>66.0</td><td>66.5</td></tr>
+                <tr><td>Gemini-3.0-Pro</td><td>--</td><td>59.2</td><td>66.8</td><td>74.8</td><td>--</td></tr>
+                <tr><td>Seed-2.0-Pro</td><td>--</td><td>77.3*</td><td>82.4*</td><td>78.6</td><td>--</td></tr>
+
+                <tr class="group-row"><td colspan="6">Open-source models</td></tr>
+                <tr><td>Kimi-K2.5</td><td>1T-A32B</td><td>78.4*</td><td>--</td><td>--</td><td>--</td></tr>
+                <tr><td>GLM-4.7</td><td>355B-A32B</td><td>67.5*</td><td>66.6*</td><td>--</td><td>72.0</td></tr>
+                <tr><td>GLM-5.0</td><td>744B-A40B</td><td>75.9*</td><td>72.7*</td><td>--</td><td>--</td></tr>
+                <tr><td>DeepSeek V3.2</td><td>671B-A37B</td><td>67.6*</td><td>65.0*</td><td>75.1</td><td>78.0</td></tr>
+                <tr><td>LongCat-Flash-Thinking-2601</td><td>560B-A27B</td><td>73.1*</td><td>77.7*</td><td>--</td><td>--</td></tr>
+                <tr><td>MiniMax-M2</td><td>230B-A10B</td><td>44.0</td><td>--</td><td>75.7</td><td>72.0</td></tr>
+                <tr><td>MiniMax-M2.5</td><td>230B-A10B</td><td>76.3*</td><td>--</td><td>--</td><td>--</td></tr>
+                <tr><td>Step-3.5-Flash</td><td>196B-A11B</td><td>69.0*</td><td>66.9</td><td>84.5</td><td>83.7</td></tr>
+
+                <tr class="group-row"><td colspan="6">Open-source lightweight models</td></tr>
+                <tr><td>Tongyi DeepResearch</td><td>30B-A3B</td><td>43.4</td><td>46.7</td><td>70.9</td><td>75.0</td></tr>
+                <tr><td>Tongyi DR Swarm</td><td>30B-A3B</td><td>≈43.4</td><td>≈46.7</td><td>≈70.9</td><td>≈75.0</td></tr>
+                <tr><td>RedSearcher</td><td>30B-A3B</td><td>57.4*</td><td>58.2*</td><td>80.1</td><td>--</td></tr>
+                <tr><td>LongSeeker</td><td>30B-A3B</td><td>61.5*</td><td>62.5*</td><td>77.7*</td><td>78.0*</td></tr>
+                <tr><td>MiroThinker-1.5-mini</td><td>30B-A3B</td><td>56.1*</td><td>66.8*</td><td>72.0*</td><td>73.1*</td></tr>
+                <tr><td>MiroThinker-1.7-mini</td><td>30B-A3B</td><td>67.9*</td><td>72.3*</td><td>80.3*</td><td>--</td></tr>
+                <tr class="ours"><td>SearchSwarm (Ours)</td><td>30B-A3B</td><td>68.1*</td><td>73.3*</td><td>82.5*</td><td>80.8*</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="generalization">
+      <div class="container">
+        <div class="section-card">
+          <div class="section-head">
+            <h2>Open-Ended Deep Research</h2>
+            <p>Although trained on short-answer deep research queries, SearchSwarm transfers to long-form evidence synthesis.</p>
+          </div>
+          <div class="split">
+            <div class="table-scroll compact-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>ScholarQA-v2</th>
+                    <th>HealthBench</th>
+                    <th>ResearchQA</th>
+                    <th>DeepResearchBench</th>
+                    <th>Average</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="group-row"><td colspan="6">Closed-source systems</td></tr>
+                  <tr><td>OpenAI DeepResearch</td><td>79.6</td><td>53.8</td><td>79.2</td><td>46.9</td><td>64.9</td></tr>
+                  <tr><td>Perplexity DeepResearch</td><td>67.3</td><td>--</td><td>75.3</td><td>42.3</td><td>--</td></tr>
+                  <tr><td>Gemini-3.1-Pro + search</td><td>--</td><td>47.5</td><td>74.5</td><td>44.4</td><td>--</td></tr>
+
+                  <tr class="group-row"><td colspan="6">Open-source models</td></tr>
+                  <tr><td>Qwen3-8B</td><td>40.4</td><td>16.5</td><td>56.1</td><td>33.3</td><td>36.6</td></tr>
+                  <tr><td>QwQ-32B</td><td>41.9</td><td>24.5</td><td>60.9</td><td>40.3</td><td>41.9</td></tr>
+                  <tr><td>Tongyi DeepResearch</td><td>46.5</td><td>46.2</td><td>66.7</td><td>40.6</td><td>50.0</td></tr>
+                  <tr><td>WebThinker-32B-DPO</td><td>46.7</td><td>39.4</td><td>74.2</td><td>40.6</td><td>50.2</td></tr>
+                  <tr><td>Dr.Tulu</td><td>88.3</td><td>52.8</td><td>75.7</td><td>45.4</td><td>65.6</td></tr>
+                  <tr class="ours"><td>SearchSwarm (Ours)</td><td>79.2</td><td>52.8</td><td>80.2</td><td>44.4</td><td>64.2</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">SearchSwarm · Delegation Intelligence for Agentic Deep Research</div>
+  </footer>
+</body>
+</html>

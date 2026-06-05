@@ -1,0 +1,1341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Question</title>
+<style>
+:root {
+  --bg: #fafaf9;
+  --card: #fff;
+  --ink: #1a1a1a;
+  --muted: #666;
+  --border: #d4d4d4;
+  --think: #fef3c7;
+  --tool: #dbeafe;
+  --sub: #e9d5ff;
+  --explanation: #fef9c3;
+  --user: #f0f9ff;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+.wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; }
+h1 { font-size: 24px; margin: 0 0 8px; }
+.question { font-style: italic; color: var(--muted); margin-bottom: 24px; font-size: 15px; }
+
+.final-report {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin-bottom: 40px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.final-report h2 { font-size: 20px; margin: 20px 0 10px; }
+.final-report h3 { font-size: 17px; margin: 16px 0 8px; }
+.final-report h4 { font-size: 15px; margin: 12px 0 6px; }
+.final-report p { margin: 8px 0; }
+.final-report ul, .final-report ol { margin: 8px 0; padding-left: 28px; }
+.final-report li { margin: 4px 0; }
+.final-report code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+.final-report a { color: #2563eb; word-break: break-all; }
+.final-report .md-table { border-collapse: collapse; margin: 12px 0; font-size: 14px; width: 100%; }
+.final-report .md-table th, .final-report .md-table td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
+.final-report .md-table th { background: #f9fafb; font-weight: 600; }
+.final-report .ref-list { margin: 12px 0; }
+.final-report .ref-item { margin: 4px 0; font-size: 14px; padding-left: 8px; border-left: 2px solid #e5e7eb; }
+.final-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.final-section { margin-bottom: 18px; }
+.final-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.final-answer-box {
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 18px 0 24px;
+}
+.final-answer-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #166534;
+  word-break: break-word;
+}
+.final-empty { color: var(--muted); font-style: italic; }
+.sub-section .md .ref-list { margin: 8px 0; }
+.sub-section .md .ref-item { margin: 3px 0; font-size: 13px; padding-left: 6px; border-left: 2px solid #e5e7eb; }
+
+.flow-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+.flow { display: flex; flex-direction: column; gap: 12px; }
+
+.node {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 16px;
+}
+.node-user { background: var(--user); }
+.node-think { background: var(--think); }
+.node-tool { background: var(--tool); }
+.node-sub-branch { background: var(--sub); }
+.node-explanation { background: var(--explanation); border-width: 2px; }
+.node-answer { background: #dcfce7; }
+.node-final-report { background: #fef9c3; border: 2px solid #eab308; }
+.node-limit { background: #fff7ed; border: 2px solid #f97316; }
+.node-text { background: transparent; border: none; padding: 4px 0; }
+
+.node-title {
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+details.node > summary.node-title::marker { content: '▸ '; }
+details.node[open] > summary.node-title::marker { content: '▾ '; }
+
+.node-body { margin-top: 10px; font-size: 14px; }
+.node-body pre { background: #f9fafb; padding: 10px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; font-size: 13px; margin: 0; }
+.node-body .md h2 { font-size: 17px; margin: 14px 0 8px; }
+.node-body .md h3 { font-size: 15px; margin: 12px 0 6px; }
+.node-body .md p { margin: 6px 0; }
+.node-body .md ul, .node-body .md ol { margin: 6px 0; padding-left: 24px; }
+.node-body .md code { background: #f4f4f4; padding: 1px 5px; border-radius: 3px; }
+.node-body .md a { color: #2563eb; word-break: break-all; }
+.node-body-inline { font-size: 13px; color: var(--muted); }
+
+.tool-results { display: flex; flex-direction: column; gap: 8px; }
+.tool-result { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 4px; padding: 8px 12px; }
+.tool-result summary { cursor: pointer; font-size: 13px; font-weight: 500; }
+.tool-result pre { margin: 8px 0 0; font-size: 12px; white-space: pre-wrap; word-break: break-word; }
+.tool-result .search-body { margin: 8px 0 0; font-size: 13px; }
+.tool-result .search-body h3 { font-size: 14px; margin: 8px 0 4px; }
+.tool-result .search-body p { margin: 4px 0; }
+.tool-result .search-body a { color: #2563eb; word-break: break-word; }
+.tool-result .search-items { margin: 8px 0; padding-left: 24px; }
+.tool-result .search-items li { margin: 10px 0; }
+.tool-result .search-item-title { font-weight: 500; margin-bottom: 4px; }
+.tool-result .search-item-title a { color: #2563eb; }
+.tool-result .search-item-meta { font-size: 12px; color: #666; line-height: 1.5; }
+.tool-result .visit-body { margin: 8px 0 0; font-size: 13px; }
+.tool-result .visit-body h3 { font-size: 14px; margin: 8px 0 4px; }
+.tool-result .visit-body p { margin: 4px 0; }
+.tool-result .visit-body a { color: #2563eb; word-break: break-word; }
+.tool-result .truncated { color: #999; font-style: italic; margin-top: 8px; }
+
+.sub-branches { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+.sub-card { flex: 1 1 240px; min-width: 0; background: #fff; border: 1px solid #d1d5db; border-radius: 6px; padding: 14px 16px; }
+.sub-header { margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed #e5e7eb; }
+.sub-goal { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.sub-stats { font-size: 12px; color: var(--muted); }
+.sub-section { margin: 8px 0; }
+.sub-section summary { cursor: pointer; font-size: 13px; font-weight: 500; padding: 4px 6px; background: #f9fafb; border-radius: 3px; }
+.sub-section pre { background: #fff; border: 1px solid #e5e7eb; padding: 8px; border-radius: 4px; margin: 6px 0 0; font-size: 12px; white-space: pre-wrap; word-break: break-word; }
+.sub-section .md { background: #fff; padding: 10px 12px; border-left: 3px solid #8b5cf6; border-radius: 0 4px 4px 0; margin-top: 6px; }
+.sub-section .md h2 { font-size: 15px; margin: 10px 0 6px; }
+.sub-section .md h3 { font-size: 14px; margin: 8px 0 4px; }
+.sub-section .md p { margin: 4px 0; font-size: 13px; }
+.sub-section .md ul, .sub-section .md ol { margin: 4px 0; padding-left: 20px; font-size: 13px; }
+.sub-section .md code { background: #f4f4f4; padding: 1px 4px; border-radius: 2px; font-size: 12px; }
+.sub-section .md a { color: #2563eb; word-break: break-all; }
+
+.inner-flow { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.inner-node { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; padding: 6px 10px; font-size: 12px; }
+.inner-node summary { cursor: pointer; font-weight: 500; }
+.inner-node pre { margin: 6px 0 0; font-size: 11px; white-space: pre-wrap; word-break: break-word; background: #fff; padding: 6px; border-radius: 3px; }
+.inner-user { background: #eaf2fb; }
+.inner-think { background: #fef3c7; }
+.inner-tool { background: #dbeafe; }
+.inner-final { background: #dcfce7; font-weight: 500; }
+.inner-result { margin: 6px 0 0; }
+.inner-result-detail { background: #fff; border: 1px solid #e5e7eb; border-radius: 3px; padding: 4px 8px; margin: 4px 0; }
+.inner-result-detail summary { cursor: pointer; font-size: 11px; }
+.inner-result-body { margin-top: 4px; font-size: 11px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Question</h1>
+  <div class="question">截至2023年，我需要找到一个现已解散的非营利组织。它成立于澳大利亚SBS电视台开播的那一年，并于20世纪90年代中期停止运作。这是一个与某个成立于1988年的已解散政治党派同名的基金会。在其运营的某个财年中，它组织活动并授予了恰好410项非独家许可。该组织曾多年接受位于南半球、与新西兰隔塔斯曼海相望的那个国家的中央政府部分资助，但这项资助在切尔诺贝利核事故同年终止，此后它转而参与了一项推广本国产品的全国性运动。该组织曾发布一份议会文件，其编号与一家其总部位于该国东部沿海最大城市的国家级公共广播公司，在1994年发布的关于1993/1994财年的年度报告所使用的议会文件编号完全相同。此外，该组织还设立并颁发过以自身名称命名的奖项。请问，这个符合所有上述条件的组织的具体名称是什么？</div>
+
+  <div class="final-report">
+    <div class="final-card-title">Final response delivered to user</div>
+<div class="final-answer-box"><div class="final-label">Answer</div><div class="final-answer-text">Advance Australia Foundation（澳洲前进基金会）</div></div>
+    <div class="final-section"><div class="final-label">Explanation</div><div class="md"><p>This question asks for a now-dissolved non-profit organization satisfying multiple constraints. Let me verify each one:</p>
+<p><strong>Founded in the year SBS TV started:</strong> SBS Television (Special Broadcasting Service) commenced full-time broadcasting in Australia on 24 October 1980 [1]. The <strong>Advance Australia Foundation (AAF)</strong> was established in 1980 [2].</p>
+<p><strong>Ceased operations in the mid-1990s:</strong> The AAF was "wound up in the mid-1990s" and went into voluntary liquidation in 1996 [2][3].</p>
+<p><strong>Shares its name with a dissolved political party founded in 1988:</strong> The <strong>Advance Australia Party</strong> was founded in 1988 (originally as the Rex Connor Labor Party) and was deregistered in 2005 [4]. Both organizations share the name "Advance Australia."</p>
+<p><strong>Granted exactly 410 non-exclusive licenses in one financial year:</strong> According to the AAF's Annual Report 1985/86 (PP no. 248 of 1987), "During the period 1 June 1985 to 30 June 1986 there were 410 Non-Exclusive licences granted" for the use of the "Australian Made" certification mark [5].</p>
+<p><strong>Received partial funding from the central government of the country across the Tasman Sea from New Zealand (i.e., Australia):</strong> The AAF was "for several years partly funded by the Federal Government" [2].</p>
+<p><strong>Funding terminated in the year of the Chernobyl disaster (1986):</strong> The AAF's government funding ended in 1986, the same year as the Chernobyl nuclear accident. As Wikipedia states, "This ended in 1986 when the AAF become involved in the Australian Made campaign, which the Government decided it would prefer to fund directly" [2].</p>
+<p><strong>Participated in a national campaign promoting domestic products:</strong> After losing government funding, the AAF administered the national "Australian Made" logo and ran the "Buy Australian Made" campaign [2][6].</p>
+<p><strong>Published a parliamentary document with the same number as the ABC's 1993/94 annual report:</strong> The ABC (Australian Broadcasting Corporation), headquartered in Sydney — the largest city on Australia's eastern coast — published its Annual Report for 1993/1994 as Parliamentary Paper No. 248 of 1994 [7]. The AAF's Annual Report 1985/86 was also designated PP No. 248 of 1987 [5]. Both carry the parliamentary paper number <strong>248</strong>.</p>
+<p><strong>Established and awarded prizes named after itself:</strong> The AAF gave the <strong>"Advance Australia Award"</strong> to individuals and groups who made "outstanding contributions to the growth and enhancement of Australia" [2].</p>
+<p>All constraints are satisfied by a single entity: the <strong>Advance Australia Foundation</strong>.</p>
+<h4>References</h4>
+<div class="ref-list"><div class="ref-item">[1] SBS (Australian TV channel) - Wikipedia — <a href="https://en.wikipedia.org/wiki/SBS_(Australian_TV_channel" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/SBS_(Australian_TV_channel</a>)</div><div class="ref-item">[2] Advance Australia Foundation - Wikipedia — <a href="https://en.wikipedia.org/wiki/Advance_Australia_Foundation" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Advance_Australia_Foundation</a></div><div class="ref-item">[3] Senate Official Hansard (3 July 1998) — <a href="https://www.aph.gov.au/binaries/hansard/senate/dailys/ds030798.pdf" target="_blank" rel="noopener">https://www.aph.gov.au/binaries/hansard/senate/dailys/ds030798.pdf</a></div><div class="ref-item">[4] Advance Australia Party (1988) - Wikipedia — <a href="https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988</a>)</div><div class="ref-item">[5] 1985/1986, PP no. 248 of 1987 - National Library of Australia — <a href="https://nla.gov.au/nla.obj-1117248598" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1117248598</a></div><div class="ref-item">[6] History of Australian Made - The Australian Made Campaign — <a href="https://australianmade.com.au/why-buy-australian-made/history-of-australian-made" target="_blank" rel="noopener">https://australianmade.com.au/why-buy-australian-made/history-of-australian-made</a></div><div class="ref-item">[7] 1993/1994, PP no. 248 of 1994 - National Library of Australia — <a href="https://nla.gov.au/nla.obj-1665762169" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1665762169</a> (search snippet)</div></div></div></div>
+  </div>
+
+  <div class="flow-title">Execution flow</div>
+  <div class="flow">
+<div class="node node-user" id="n1">
+  <div class="node-title">User question</div>
+  <div class="node-body">截至2023年，我需要找到一个现已解散的非营利组织。它成立于澳大利亚SBS电视台开播的那一年，并于20世纪90年代中期停止运作。这是一个与某个成立于1988年的已解散政治党派同名的基金会。在其运营的某个财年中，它组织活动并授予了恰好410项非独家许可。该组织曾多年接受位于南半球、与新西兰隔塔斯曼海相望的那个国家的中央政府部分资助，但这项资助在切尔诺贝利核事故同年终止，此后它转而参与了一项推广本国产品的全国性运动。该组织曾发布一份议会文件，其编号与一家其总部位于该国东部沿海最大城市的国家级公共广播公司，在1994年发布的关于1993/1994财年的年度报告所使用的议会文件编号完全相同。此外，该组织还设立并颁发过以自身名称命名的奖项。请问，这个符合所有上述条件的组织的具体名称是什么？</div>
+</div>
+
+<details class="node node-think" id="n2">
+  <summary class="node-title">think (2605 chars)</summary>
+  <div class="node-body"><pre>Let me break down the clues in this question:
+
+1. A now-dissolved non-profit organization
+2. Founded in the year SBS TV started broadcasting in Australia
+3. Ceased operations in the mid-1990s
+4. Shares its name with a dissolved political party founded in 1988
+5. In one of its financial years, it organized activities and granted exactly 410 non-exclusive licenses
+6. It received partial funding from the central government of a country in the Southern Hemisphere, across the Tasman Sea from New Zealand (that's Australia)
+7. This funding was terminated in the same year as the Chernobyl disaster (1986)
+8. After that, it participated in a national campaign promoting domestic products
+9. It published a parliamentary document with the same number as an annual report published by a national public broadcaster headquartered in the largest city on the eastern coast of that country, for the 1993/1994 fiscal year
+10. The organization established and awarded prizes named after itself
+
+Let me think about this more carefully:
+
+- "与新西兰隔塔斯曼海相望的那个国家" - the country across the Tasman Sea from New Zealand is Australia
+- But wait, SBS is an Australian TV station. So the organization was funded by the Australian government? That seems redundant if the organization is also Australian.
+- Actually, re-reading: "它曾多年接受位于南半球、与新西兰隔塔斯曼海相望的那个国家的中央政府部分资助" - it received partial funding from the central government of the country across the Tasman Sea from New Zealand = Australia.
+
+Wait, but SBS is also Australian. Let me reconsider. Maybe the organization is based in New Zealand? No, SBS is specifically Australian Broadcasting Corporation's SBS channel.
+
+Actually, let me re-read more carefully. The organization:
+- Was founded in the year SBS TV started (SBS started in 1980 or 1988?)
+- Received funding from Australia's government
+- After funding ended (1986), participated in a national campaign promoting domestic products
+
+Hmm, but if it received Australian government funding and was founded when SBS started... Let me check when SBS started.
+
+SBS Television in Australia began broadcasting on November 24, 1980. So the organization was founded in 1980.
+
+Now, the political party founded in 1988 that has been dissolved - I need to find a political party founded in 1988 that shares its name with this foundation.
+
+The national public broadcaster headquartered in the largest city on the eastern coast of Australia - that would be ABC (Australian Broadcasting Corporation) headquartered in Sydney. Their annual report for 1993/1994 would have a parliamentary document number.
+
+Let me search for these clues.</pre></div>
+</details>
+
+<details class="node node-sub-branch" id="n7">
+  <summary class="node-title">call_sub_agent → 4 parallel sub-agents</summary>
+  <div class="node-body"><div class="sub-branches">
+<div class="sub-card" id="n3">
+  <div class="sub-header">
+    <div class="sub-goal">Find SBS TV launch year</div>
+    <div class="sub-stats">7 steps</div>
+  </div>
+  <details class="sub-section">
+    <summary>Dispatched prompt</summary>
+    <pre>I need to find out when SBS Television started broadcasting in Australia. Please search for 'SBS Television Australia launch year' or 'SBS TV Australia first broadcast year'. I need the exact year SBS started regular television broadcasting.</pre>
+  </details>
+  <details class="sub-section" open>
+    <summary>Returned report (1502 chars)</summary>
+    <div class="md"><h3>SBS Television — Launch Year</h3>
+<p><strong>SBS Television began full-time regular television broadcasting in Australia on 24 October 1980.</strong> [1][2]</p>
+<h4>Key Details</h4>
+<ul><li><strong>Date of full-time launch:</strong> 24 October 1980 (United Nations Day) [1]</li><li><strong>Initial name:</strong> Channel 0/28 (broadcasting on UHF Channel 28 and VHF Channel 0 in Sydney) [2]</li><li><strong>Initial coverage:</strong> Sydney and Melbourne [1]</li><li><strong>First program shown:</strong> A multicultural programming block, as part of the new public service's transition from its original role as a radio network [1]</li></ul>
+<h4>Background</h4>
+<p>SBS was originally founded in 1975 as a <strong>radio network</strong>, not a television broadcaster [3]. Before the full-time TV launch, SBS conducted <strong>test transmissions starting in April 1979</strong>, showing foreign-language programs on Sunday mornings [1]. These test broadcasts ran until July 1979 as a limited weekly offering [4].</p>
+<p>Full-time television broadcasting commenced exactly five years later on <strong>24 October 1980</strong>, marking SBS's transformation into a multimedia broadcaster [2][3].</p>
+<h4>References</h4>
+<div class="ref-list"><div class="ref-item">[1] Our History - SBS About — <a href="https://www.sbs.com.au/aboutus/who-we-are/our-history/" target="_blank" rel="noopener">https://www.sbs.com.au/aboutus/who-we-are/our-history/</a></div><div class="ref-item">[2] SBS (Australian TV channel) - Wikipedia — <a href="https://en.wikipedia.org/wiki/SBS_(Australian_TV_channel" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/SBS_(Australian_TV_channel</a>))</div><div class="ref-item">[3] Special Broadcasting Service - Wikipedia — <a href="https://en.wikipedia.org/wiki/Special_Broadcasting_Service" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Special_Broadcasting_Service</a> (search snippet)</div><div class="ref-item">[4] 1979: SBS television makes its debut — <a href="https://televisionau.com/2019/04/1979-sbs-television-makes-its-debut.html" target="_blank" rel="noopener">https://televisionau.com/2019/04/1979-sbs-television-makes-its-debut.html</a> (search snippet)</div></div>
+<p>---</p>
+<p>A</p></div>
+  </details>
+  <details class="sub-section"><summary>Inner trajectory (7 steps)</summary><div class="inner-flow"><div class="inner-node inner-user">📥 Dispatched prompt</div><details class="inner-node inner-think"><summary>think (113 chars)</summary><pre>The user wants to know when SBS Television started broadcasting in Australia. Let me search for this information.</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: "SBS Television Australia launch year"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/SBS_(Australian_TV_channel" target="_blank" rel="noopener">SBS (Australian TV channel) - Wikipedia</a>)
+
+SBS originally began airing full-time transmissions on 24 October 1980 under the name 'Channel 0/28'; broadcasting on UHF Channel 28 and VHF Channel 0 in Sydney ...
+
+2. <a href="https://en.wikipedia.org/wiki/Special_Broadcasting_Service" target="_blank" rel="noopener">Special Broadcasting Service - Wikipedia</a>
+
+SBS was founded in 1975 as a radio network and launched its television channel in 1980. In-show advertising commenced in 2006 with commercial breaks spanning ...
+
+3. <a href="https://www.facebook.com/sbsnews/posts/in-1975-sbs-went-to-air-for-the-first-time-with-two-radio-stations-one-in-sydney/1147044827467076/" target="_blank" rel="noopener">In 1975, SBS went to air for the first time with two radio stations, one ...</a>
+Date published: Jun 8, </div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "SBS TV Australia first broadcast year"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/Special_Broadcasting_Service" target="_blank" rel="noopener">Special Broadcasting Service - Wikipedia</a>
+
+SBS was founded in 1975 as a radio network and launched its television channel in 1980. In-show advertising commenced in 2006 with commercial breaks spanning ...
+
+2. <a href="https://en.wikipedia.org/wiki/SBS_(Australian_TV_channel" target="_blank" rel="noopener">SBS (Australian TV channel) - Wikipedia</a>)
+
+SBS originally began airing full-time transmissions on 24 October 1980 under the name 'Channel 0/28'; broadcasting on UHF Channel 28 and VHF Channel 0 in Sydney ...
+
+3. <a href="https://www.facebook.com/sbsnews/posts/in-1975-sbs-went-to-air-for-the-first-time-with-two-radio-stations-one-in-sydney/1147044827467076/" target="_blank" rel="noopener">In 1975, SBS went to air for the first time with two radio stations, one ...</a>
+Date published: Jun 8, </div></details></div></details><details class="inner-node inner-think"><summary>think (484 chars)</summary><pre>The search results are quite clear and consistent. Let me summarize:
+
+1. SBS was founded in 1975 as a radio network.
+2. Test transmissions began in April 1979.
+3. Full-time television broadcasting began on **24 October 1980** under the name 'Channel 0/28'.
+
+Multiple authoritative sources confirm this: Wikipedia (both articles), SBS's own official website ("Our History"), Screen Australia, etc.
+
+Let me visit the SBS official history page to get the most authoritative confirmation.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: www.sbs.com.au</summary><div class="inner-result-body">Confirm the exact date SBS Television started full-time broadcasting in Australia as follows: 
+
+Evidence in page: 
+SBS TV began test transmissions in April 1979, showing various foreign language programs on Sunday mornings. Full-time transmission began on 24 October 1980 (United Nations Day), broadcasting in Sydney and Melbourne.
+
+Summary: 
+SBS Television started full-time broadcasting on 24 October 1980.</div></details></div></details><details class="inner-node inner-think"><summary>think (186 chars)</summary><pre>The information is very clear and confirmed from the official SBS source. SBS Television started full-time broadcasting on 24 October 1980. I have enough to write a comprehensive report.</pre></details></div></details>
+</div>
+<div class="sub-card" id="n4">
+  <div class="sub-header">
+    <div class="sub-goal">Find Australian political parties founded 1988</div>
+    <div class="sub-stats">47 steps</div>
+  </div>
+  <details class="sub-section">
+    <summary>Dispatched prompt</summary>
+    <pre>I need to find Australian political parties that were founded in 1988 and have since been dissolved/wound up. Please search for 'Australian political party founded 1988 dissolved' and 'Australian political party registered 1988 deregistered'. List all such parties you can find with their names and founding years.</pre>
+  </details>
+  <details class="sub-section" open>
+    <summary>Returned report (3573 chars)</summary>
+    <div class="md"><h3>Australian Political Parties Founded in 1988 That Have Since Been Dissolved/Wound Up</h3>
+<p>Based on extensive research across the Australian Electoral Commission (AEC) records, Wikipedia's list of historical political parties in Australia, and other sources, the following Australian political parties were founded/established in 1988 and have since been dissolved or wound up:</p>
+<h4>1. Advance Australia Party (1988)</h4>
+<ul><li><strong>Founded:</strong> 1988 (as the Rex Connor Labor Party) [1]</li><li><strong>Dissolved:</strong> 2005</li><li><strong>Details:</strong> A minor populist party characterised by nationalism and populism. It was registered on 14 July 1989, but was deregistered by the AEC on 5 December 2005 for failing to endorse a candidate in the previous four years [1][2].</li></ul>
+<h4>2. The Federal Party of Australia</h4>
+<ul><li><strong>Founded:</strong> 5 May 1988 [3]</li><li><strong>Dissolved:</strong> c. 2019 [3]</li><li><strong>Details:</strong> An Australian political party based in Queensland, also known simply as "the Federals." The party is no longer active.</li></ul>
+<h4>3. Fair Elections Coalition</h4>
+<ul><li><strong>Founded:</strong> 11 August 1988 (as a lobby group) [4]</li><li><strong>Deregistered:</strong> 26 July 1991 [4]</li><li><strong>Details:</strong> Formed in opposition to the modified D'Hondt electoral system used in the first ACT election under self-government. It applied for AEC registration on 5 January 1989 and was registered 11 days later. It contested the 1989 ACT Legislative Assembly election but narrowly missed winning a seat (falling just 117 votes short). It was deregistered by the AEC on 26 July 1991 [4].</li></ul>
+<h4>4. Independent EFF (Enterprise, Freedom, Family)</h4>
+<ul><li><strong>Formally registered with AEC:</strong> 3 November 1988 [5]</li><li><strong>Deregistered:</strong> 13 August 1999 [5]</li><li><strong>Details:</strong> While the party originated in 1987 from local government politics in New South Wales, it was formally registered with the AEC on 3 November 1988. It fielded candidates in state elections (notably the 1988 NSW state election, where it won 1.22% of the vote) and was deregistered for failing to maintain the required minimum of 500 members [5][6].</li></ul>
+<h4>Notable Exclusion</h4>
+<ul><li><strong>Australian Citizens Party</strong> — Founded in 1988 and still active as of 2025; does not meet the dissolution criterion [7].</li></ul>
+<h4>Uncertainty Notes</h4>
+<ul><li>The founding date of the Independent EFF is somewhat ambiguous: the party was initiated in 1987 by Joe Bryant, but its formal AEC registration date is 3 November 1988. Some sources list it as originating in 1987 [6], while the AEC record shows 1988 as the registration year [5].</li><li>The Fair Elections Coalition was founded in 1988 but did not register with the AEC until January 1989, so its federal political party status effectively began in 1989 [4].</li><li>There may be additional very minor state-level parties from 1988 that do not appear in federal records or Wikipedia's historical lists.</li></ul>
+<p>---</p>
+<h4>References</h4>
+<div class="ref-list"><div class="ref-item">[1] Advance Australia Party (1988) - Wikipedia — <a href="https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988</a>)</div><div class="ref-item">[2] List of historical political parties in Australia - Wikipedia — <a href="https://en.wikipedia.org/wiki/List_of_historical_political_parties_in_Australia" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/List_of_historical_political_parties_in_Australia</a></div><div class="ref-item">[3] The Federal Party of Australia - Wikipedia — <a href="https://en.wikipedia.org/wiki/The_Federal_Party_of_Australia" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/The_Federal_Party_of_Australia</a></div><div class="ref-item">[4] Fair Elections Coalition - Wikipedia — <a href="https://en.wikipedia.org/wiki/Fair_Elections_Coalition" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Fair_Elections_Coalition</a></div><div class="ref-item">[5] Independent EFF - Australian Electoral Commission — <a href="https://www.aec.gov.au/parties_and_representatives/party_registration/Deregistered_parties/ieff.htm" target="_blank" rel="noopener">https://www.aec.gov.au/parties_and_representatives/party_registration/Deregistered_parties/ieff.htm</a></div><div class="ref-item">[6] Independent EFF — Grokipedia — <a href="https://grokipedia.com/page/independent_eff" target="_blank" rel="noopener">https://grokipedia.com/page/independent_eff</a></div><div class="ref-item">[7] Australian Citizens Party - Wikipedia — <a href="https://en.wikipedia.org/wiki/Australian_Citizens_Party" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Australian_Citizens_Party</a></div></div>
+<p>---</p>
+<p>A</p></div>
+  </details>
+  <details class="sub-section"><summary>Inner trajectory (47 steps)</summary><div class="inner-flow"><div class="inner-node inner-user">📥 Dispatched prompt</div><details class="inner-node inner-think"><summary>think (103 chars)</summary><pre>Let me search for Australian political parties founded in 1988 that have since been dissolved/wound up.</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian political party founded 1988 "</summary><div class="inner-result-body">## Web Results
+1. <a href="https://www.theguardian.com/commentisfree/2015/mar/27/malcolm-frasers-renew-australia-party-is-a-lament-for-the-country-we-should-have-had" target="_blank" rel="noopener">Malcolm Fraser's Renew Australia party is a lament for the country ...</a>
+Date published: Mar 26, 2015
+
+The manifesto of a new political party is a scorching indictment on the major political parties' abandonment of egalitarianism.
+
+2. <a href="https://en.wikipedia.org/wiki/List_of_political_parties_in_Australia" target="_blank" rel="noopener">List of political parties in Australia - Wikipedia</a>
+
+The politics of Australia has a mild two-party system, with two dominant political groupings in the Australian political system, the Australian Labor Party ...
+
+3. [Deregistered political parties - Australian Electoral Commission](<a href="https://www.aec.gov.au/parties_and_representatives/P" target="_blank" rel="noopener">https://www.aec.gov.au/parties_and_representatives/P</a></div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian political party registered 19"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://www.aec.gov.au/parties_and_representatives/Party_Registration/Deregistered_parties/index.htm" target="_blank" rel="noopener">Deregistered political parties - Australian Electoral Commission</a>
+Date published: Feb 11, 2025
+
+List of parties. Name. Date deregistered. Reason Australia, deregistered 3 June 2024. Independent Voices for the Senate, deregistered 5 ...
+
+2. <a href="https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988" target="_blank" rel="noopener">Advance Australia Party (1988) - Wikipedia</a>)
+
+The Advance Australia Party (AAP), founded in 1988 as the Rex Connor Labor Party, was a minor political party in Australia. It was a populist party founded ...
+
+3. <a href="https://www.aec.gov.au/parties_and_representatives/party_registration/Deregistered_parties/dspa.htm" target="_blank" rel="noopener">The Deadly Serious Party of Australia</a>
+Date published: Jan 5, 201</div></details></div></details><details class="inner-node inner-think"><summary>think (0 chars)</summary><pre></pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: www.aec.gov.au</summary><div class="inner-result-body">Find Australian political parties founded in 1988 that were later deregistered/dissolved as follows: 
+
+Evidence in page: 
+The webpage content shows entries such as 'Deadly Serious Party of Australia deregistered 2 Nov 1988', 'Weekend Trading Party deregistered 31 Oct 1988', 'Conservative Party of Australia deregistered 21 Oct 1988', 'Advance Australia Party deregistered 21 Oct 1988', 'Grey Power deregistered 24 Dec 1986', etc. These deregistration dates are in 1988, but the parties could have been founded earlier. No founding information is provided.
+
+Summary: 
+The provided webpage does not contain information about the founding years of political parties, only their deregistration dates. Therefore, it cannot fulfill the user's goal of finding parties founded in 1988 that were later deregi</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Find Australian political parties founded in 1988 that were later deregistered/dissolved as follows: 
+
+Evidence in page: 
+The webpage includes sections for 'Federal parliamentary parties', 'Federal non-parliamentary parties', and state-level parties, but none of the parties listed have a founding year of 1988. The only years mentioned are 1909, 1910, 1944, 1970s, 1980s, 1987, 1990, 2010, 2016, 2019, 2022, 2025, 2026, etc., with no specific reference to 1988. There is no dedicated section for 'deregistered' or 'dissolved' parties; the page only lists currently registered parties as of March 2026.
+
+Summary: 
+The webpage content does not contain any information about Australian political parties founded in 1988 that were later deregistered or dissolved. It primarily lists currently active par</div></details></div></details><details class="inner-node inner-think"><summary>think (0 chars)</summary><pre></pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Find founding year and dissolution status of Advance Australia Party (1988) as follows: 
+
+Evidence in page: 
+Infobox: 'Founded | 1988', 'Dissolved | 2005'. History section: 'The party was founded in 1988 by Rex Connor Jr... It was registered on 14 July 1989, but deregistered by the Australian Electoral Commission on 5 December 2005 for failing to endorse a candidate in the previous four years.'
+
+Summary: 
+The Advance Australia Party (1988) was founded in 1988 and dissolved in 2005, as it was deregistered by the Australian Electoral Commission on 5 December 2005 due to inactivity.</div></details></div></details><details class="inner-node inner-think"><summary>think (204 chars)</summary><pre>I found the Advance Australia Party (1988) as a match. Now let me look for more parties. I also need to check the AEC deregistered parties list more carefully and search for other parties founded in 1988.</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian political party founded 1988 "</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/List_of_political_parties_in_Australia" target="_blank" rel="noopener">List of political parties in Australia - Wikipedia</a>
+
+The politics of Australia has a mild two-party system, with two dominant political groupings in the Australian political system, the Australian Labor Party ...
+
+2. <a href="https://en.wikipedia.org/wiki/List_of_historical_political_parties_in_Australia" target="_blank" rel="noopener">List of historical political parties in Australia - Wikipedia</a>
+
+This is a list of historical political parties in Australia. These parties are no longer registered or active at a federal, state or federal level.
+
+3. [Small Parties, Big Changes: The Evolution of Minor Parties Elected ...](<a href="https://www.aph.gov.au/About_Parliament/Senate/Publications_and_resources/Papers_and_research/Papers_on_Parliament_and_othe" target="_blank" rel="noopener">https://www.aph.gov.au/About_Parliament/Senate/Publications_and_resources/Papers_and_research/Papers_on_Parliament_and_othe</a></div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "site:aec.gov.au registered 1988 party"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://www.aec.gov.au/parties_and_representatives/Party_Registration/Deregistered_parties/index.htm" target="_blank" rel="noopener">Deregistered political parties - Australian Electoral Commission</a>
+Date published: Feb 11, 2025
+
+List of parties. Name. Date deregistered. Reason Australia, deregistered 3 June 2024. Independent Voices for the Senate, deregistered 5 ...
+
+2. <a href="https://www.aec.gov.au/parties_and_representatives/party_registration/Deregistered_parties/dspa.htm" target="_blank" rel="noopener">The Deadly Serious Party of Australia</a>
+Date published: Jan 5, 2011
+
+The Deadly Serious Party of Australia was registered on 26 October 1984 and deregistered on 2 November 1988. Reason: s137(1)(b) – ceased to ...
+
+3. [Independent EFF - Australian Electoral Commission](<a href="https://www.aec.gov.au/parties_and_representatives/party_registration" target="_blank" rel="noopener">https://www.aec.gov.au/parties_and_representatives/party_registration</a></div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australia political party established 19"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/List_of_historical_political_parties_in_Australia" target="_blank" rel="noopener">List of historical political parties in Australia - Wikipedia</a>
+
+This is a list of historical political parties in Australia. These parties are no longer registered or active at a federal, state or federal level.
+
+2. <a href="https://www.aec.gov.au/parties_and_representatives/Party_Registration/Deregistered_parties/index.htm" target="_blank" rel="noopener">Deregistered political parties - Australian Electoral Commission</a>
+Date published: Feb 11, 2025
+
+Australia's First Nations Political Party. deregistered 11 August ... deregistered 02 Nov 1988. Weekend Trading Party. deregistered 31 Oct ...
+
+3. <a href="https://en.wikipedia.org/wiki/List_of_political_parties_in_Australia" target="_blank" rel="noopener">List of political parties in Australia - Wikipedia</a>
+
+The politics o</div></details></div></details><details class="inner-node inner-think"><summary>think (502 chars)</summary><pre>I found some interesting leads. Let me now check the Wikipedia list of historical political parties in Australia, and also look at a few more specific AEC pages. I can see that the "Advance Australia Party" on the AEC page was registered in 1986 and deregistered in 1988, but the "Advance Australia Party (1988)" on Wikipedia is a different party (Rex Connor Labor Party) that was founded in 1988. I also need to look for the "Independent EFF" which was registered in 1988. Let me get more information.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Find all Australian political parties with founding year 1988 in the list of historical political parties as follows: 
+
+Evidence in page: 
+From the 'Parties without representation' table:
+| AAP | <a href="https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988" target="_blank" rel="noopener">Advance Australia Party</a>) | 1988-2005 | <a href="<a href="https://en.wikipedia.org/wiki/Nationalism" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Nationalism</a>" target="_blank" rel="noopener">Nationalism</a> <a href="<a href="https://en.wikipedia.org/wiki/Populism" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Populism</a>" target="_blank" rel="noopener">Populism</a> |
+
+Summary: 
+The only historical Australian political party with a founding year of 1988 is the Advance Australia Party (also known as Advance Australia Party (1988)), which existed from 1988 to 2005 and was characterized by nationalism and populism.</div></details></div></details><details class="inner-node inner-think"><summary>think (416 chars)</summary><pre>The Wikipedia list of historical political parties only shows the Advance Australia Party (1988) as being founded in 1988. But I need to be more thorough. Let me also check the AEC page for the "Independent EFF" which was registered in 1988, and look for any other parties that may have been founded/established in 1988. Let me also check the Unite Australia Party and a few other candidates from the search results.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: www.aec.gov.au</summary><div class="inner-result-body">Find founding year and registration details of Independent EFF as follows: 
+
+Evidence in page: 
+Independent EFF was registered on 3 November 1988 and deregistered on 13 August 1999. Reason: s137(1)(b) – ceased to have at least 500 members.
+
+Summary: 
+Independent EFF was registered on 3 November 1988, which indicates its founding year as 1988. It was deregistered on 13 August 1999 due to ceasing to have at least 500 members.</div></details></div></details><details class="inner-node inner-think"><summary>think (0 chars)</summary><pre></pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""Independent EFF" Australia political pa"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://www.aec.gov.au/parties_and_representatives/party_registration/Deregistered_parties/ieff.htm" target="_blank" rel="noopener">Independent EFF - Australian Electoral Commission</a>
+
+Independent EFF was registered on 3 November 1988 and deregistered on 13 August 1999. Reason: s137(1)(b) – ceased to have at least 500 members. Connect with us.
+
+2. <a href="https://grokipedia.com/page/independent_eff" target="_blank" rel="noopener">Independent EFF — Grokipedia</a>
+
+The Independent EFF (Enterprise, Freedom, Family) originated in 1987, initiated by Joe Bryant, who was then an alderman representing Ward 5 on Blacktown City ...
+
+3. <a href="https://en.wikipedia.org/wiki/1988_New_South_Wales_state_election" target="_blank" rel="noopener">1988 New South Wales state election - Wikipedia</a>
+
+Legislative Assembly ; Democrats. 1.81% ; Independent EFF. 1.22%.
+
+4. [List of historical political pa</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Unite Australia Party founded 1988 Wikip"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/Unite_Australia_Party" target="_blank" rel="noopener">Unite Australia Party - Wikipedia</a>
+
+The Unite Australia Party (UAP) was a short-lived Australian political party that existed in the late 1980s. Unite Australia Party. Abbreviation, UAP.
+
+2. <a href="https://en.wikipedia.org/wiki/United_Australia_Party" target="_blank" rel="noopener">United Australia Party - Wikipedia</a>
+
+The United Australia Party (UAP) was an Australian political party which was founded in 1931 and dissolved in 1945. It won four federal elections in that ...
+
+3. <a href="https://en.wikipedia.org/wiki/List_of_historical_political_parties_in_Australia" target="_blank" rel="noopener">List of historical political parties in Australia - Wikipedia</a>
+
+This is a list of historical political parties in Australia. These parties are no longer registered or active at a federal, state or fede</div></details></div></details><details class="inner-node inner-think"><summary>think (131 chars)</summary><pre>Let me check the Unite Australia Party Wikipedia page and also look at the Grokipedia page for Independent EFF to get more details.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Find founding year of Unite Australia Party as follows: 
+
+Evidence in page: 
+Infobox: 'Founded: December 1986'. Webpage text: 'In December 1986, senator John Siddons ... quit the Democrats to form the UAP.'
+
+Summary: 
+The Unite Australia Party was founded in December 1986.</div></details></div></details><details class="inner-node inner-think"><summary>think (407 chars)</summary><pre>The Unite Australia Party was founded in December 1986, not 1988, so it doesn't match.
+
+Now let me check the Independent EFF more carefully. The Grokipedia page says it originated in 1987, while the AEC says it was registered on 3 November 1988. Let me check if there are any other parties I might be missing. Let me also look at the full AEC deregistered parties list to see if any were registered in 1988.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: www.aec.gov.au</summary><div class="inner-result-body">Get the complete list of all deregistered political parties with their registration dates to identify any registered in 1988 as follows: 
+
+Evidence in page: 
+Full list from webpage markdown (abbreviated for context):
+- Deadly Serious Party of Australia deregistered 02 Nov 1988
+- Weekend Trading Party deregistered 31 Oct 1988
+- Conservative Party of Australia deregistered 21 Oct 1988
+- Advance Australia Party deregistered 21 Oct 1988
+- Grey Power deregistered 24 Dec 1986
+- National Country Party of Australia (WA) deregistered 24 Jul 1985
+... (and many others, see full markdown).
+Note: The page includes re-registrations, e.g., Seniors United Party of Australia re-registered 15 Dec 2021. No registration dates are provided.
+
+Summary: 
+The webpage lists all deregistered political parties with t</div></details></div></details><details class="inner-node inner-think"><summary>think (157 chars)</summary><pre>Let me search specifically for Australian political parties registered in 1988 by visiting individual AEC deregistered party pages or searching more broadly.</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian Electoral Commission deregist"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://www.aec.gov.au/parties_and_representatives/party_registration/Deregistered_parties/ieff.htm" target="_blank" rel="noopener">Independent EFF - Australian Electoral Commission</a>
+
+Independent EFF was registered on 3 November 1988 and deregistered on 13 August 1999. Reason: s137(1)(b) – ceased to have at least 500 members. Connect with ...
+
+2. <a href="https://en.wikipedia.org/wiki/Fair_Elections_Coalition" target="_blank" rel="noopener">Fair Elections Coalition - Wikipedia</a>
+
+Jump up to: 1 2 "Register of Political Parties". The Canberra Times. 6 January 1989. p. 5. Retrieved 17 November 2024. ↑ Salins, Christine (3 November 1988).
+
+3. <a href="https://grokipedia.com/page/independent_eff" target="_blank" rel="noopener">Independent EFF — Grokipedia</a>
+
+Registered with the Australian Electoral Commission on 3 November 1988, the party fielded candidates in state elections such as </div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian Electoral Commission deregist"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://www.aec.gov.au/parties_and_representatives/Party_Registration/Deregistered_parties/index.htm" target="_blank" rel="noopener">Deregistered political parties - Australian Electoral Commission</a>
+Date published: Feb 11, 2025
+
+deregistered 31 Oct 1988. Conservative Party of Australia. deregistered 21 Oct 1988. Advance Australia Party. deregistered 21 Oct 1988. Grey ...
+
+2. <a href="https://www.aec.gov.au/faqs/party-registration.htm" target="_blank" rel="noopener">FAQs: Party Registration - Australian Electoral Commission</a>
+Date published: Nov 21, 2025
+
+... 1988, or under a validly issued warrant. How long does it take to register a political party? The process takes a minimum of three months ...
+
+3. [Weekend Trading Party - Australian Electoral Commission](<a href="https://www.aec.gov.au/Parties_and_Representatives/party_registration/Deregistered_" target="_blank" rel="noopener">https://www.aec.gov.au/Parties_and_Representatives/party_registration/Deregistered_</a></div></details></div></details><details class="inner-node inner-think"><summary>think (214 chars)</summary><pre>Let me now check the Fair Elections Coalition which seems to have been registered around November 1988. Let me also look at the Grokipedia page for Independent EFF to see if it was truly founded in 1988 or earlier.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Find founding year and details of Fair Elections Coalition Australia as follows: 
+
+Evidence in page: 
+The Fair Elections Coalition (FEC) was an Australian political party that contested the first election for the Australian Capital Territory Legislative Assembly in 1989. The FEC was formed on 11 August 1988 as a lobby group in opposition to the modified D'Hondt electoral system that was introduced for the first ACT election under self-government. Under this system, any party that did not win at least 5.56% of the vote was unable to win a seat or receive preferences from other parties. The FEC also opposed single-member electoral districts, which were proposed (although failed to pass) at a 1992 referendum. Although its members, including president Miko Kirschbaum, did not initially want to</div></details></div></details><details class="inner-node inner-think"><summary>think (287 chars)</summary><pre>Interesting - the Fair Elections Coalition was founded on 11 August 1988 but registered with the AEC only on 5 January 1989. So technically its founding date is 1988 even though it wasn't federally registered until 1989.
+
+Let me also search for more parties founded specifically in 1988.</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian Greens party founded 1992 not"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/Australian_Greens" target="_blank" rel="noopener">Australian Greens - Wikipedia</a>
+
+The party was formed in 1992 as a confederation of eight state and territorial parties. In their early years, the party was largely built around the ...
+
+2. <a href="https://greens.org.au/about/our-story" target="_blank" rel="noopener">Our Story - The Australian Greens</a>
+
+In 1992 Australia's state-based Greens parties joined together, fronting the press on 30 August to announce the new federal party, the Australian Greens.
+
+3. <a href="https://ipa.org.au/ipa-review-article/the-far-left-history-of-the-australian-greens" target="_blank" rel="noopener">The Far-Left History Of The Australian Greens - IPA</a>
+
+'The first Green Party anywhere in the world began in Australia in 1972, the United Tasmania Group, which grew out of pioneering Australian environmental ...
+
+4. [Histor</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""founded in 1988" Australian political p"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988" target="_blank" rel="noopener">Advance Australia Party (1988) - Wikipedia</a>)
+
+The Advance Australia Party (AAP), founded in 1988 as the Rex Connor Labor Party, was a minor political party in Australia. It was a populist party founded ...
+
+2. <a href="https://donation.watch/en/australia/party/ACP/donors" target="_blank" rel="noopener">Top donors of Australian Citizens Party Australia | DonationWatch</a>
+
+... political party in Australia headquartered in Coburg, Victoria. It was founded in 1988 by Craig Isherwood and Maurice Hetherington and is led by Craig ...
+
+3. <a href="https://kids.britannica.com/students/article/Liberal-Party-of-Australia/487613/related" target="_blank" rel="noopener">Liberal Party of Australia - Students | Britannica Kids | Homework Help</a>
+
+The center-left Liberal Democrats are one of the three major </div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""established in 1988" Australian politic"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/Category:Political_parties_established_in_1988" target="_blank" rel="noopener">Category:Political parties established in 1988 - Wikipedia</a>
+
+Pages in category "Political parties established in 1988". The following 111 ... Asturian Nationalist Unity · Australian Citizens Party. B. Barbuda ...
+
+2. [[PDF] 10. The Liberal Party of Australia - ANU Press](<a href="https://press-files.anu.edu.au/downloads/press/n11054/pdf/ch10.pdf" target="_blank" rel="noopener">https://press-files.anu.edu.au/downloads/press/n11054/pdf/ch10.pdf</a>)
+
+Worth more than $70 million, the foundation was established in 1988 to provide funding for the Liberal. Party, especially in Victoria. Liberal powerbrokers ...
+
+3. <a href="https://en.namu.wiki/w/%EB%B6%84%EB%A5%98:1988%EB%85%84%20%EC%84%A4%EB%A6%BD%EB%90%9C%20%EC%A0%95%EB%8B%B9" target="_blank" rel="noopener">Category:Political party established in 1988 - NamuWiki</a>
+
+Political parties founded in th</div></details></div></details><details class="inner-node inner-think"><summary>think (785 chars)</summary><pre>Excellent! I found several leads:
+
+1. **Advance Australia Party (1988)** - Founded in 1988, deregistered/dissolved in 2005 ✓
+2. **Independent EFF** - Registered with AEC on 3 November 1988 (though originated from a group formed in 1987), deregistered in 1999 ✓
+3. **Australian Citizens Party** - Founded in 1988, but it appears to still be active (not dissolved)
+4. **Fair Elections Coalition** - Founded on 11 August 1988 as a lobby group, registered with AEC on 16 January 1989, deregistered on 26 July 1991 ✓
+5. **Rainbow Alliance** - "Established in 1988" - need to check if this is an Australian party and if it was dissolved
+
+Let me now check the Wikipedia category page for political parties established in 1988 to find more Australian ones, and also check the Rainbow Alliance.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Find all Australian political parties listed in the category of political parties established in 1988 as follows: 
+
+Evidence in page: 
+From the webpage content under 'Pages in category "Political parties established in 1988"':
+
+### A
+* <a href="https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988" target="_blank" rel="noopener">Advance Australia Party (1988)</a> "Advance Australia Party (1988)")
+* <a href="<a href="https://en.wikipedia.org/wiki/Australian_Citizens_Party" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Australian_Citizens_Party</a> "Australian Citizens Party"" target="_blank" rel="noopener">Australian Citizens Party</a>
+
+### F
+* <a href="<a href="https://en.wikipedia.org/wiki/The_Federal_Party_of_Australia" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/The_Federal_Party_of_Australia</a> "The Federal Party of Australia"" target="_blank" rel="noopener">The Federal Party of Australia</a>
+
+Summary: 
+The Australian political parties listed in the category 'Political parties established in 1988' are: Advance Australia Party (1988), Australian Citizens Party, and The Feder</div></details></div></details><details class="inner-node inner-think"><summary>think (0 chars)</summary><pre></pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Find founding year and dissolution status of Australian Citizens Party as follows: 
+
+Evidence in page: 
+The infobox states 'Founded: 1988; 38 years ago'. The article discusses activities up to 2025, including election results and name change in 2020, indicating the party is still operational and not dissolved.
+
+Summary: 
+The Australian Citizens Party was founded in 1988. There is no indication of dissolution; the party remains active as of the latest information in 2025.</div></details></div></details><details class="inner-node inner-think"><summary>think (220 chars)</summary><pre>The Australian Citizens Party was founded in 1988 but is still active, so it doesn't meet the criteria of being dissolved/wound up.
+
+Now let me check The Federal Party of Australia and also look for the Rainbow Alliance.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Find founding year and dissolution status of The Federal Party of Australia as follows: 
+
+Evidence in page: 
+Infobox: 'Founded | 5 May 1988', 'Dissolved | c. 2019'. Text: 'The Federal Party of Australia (FPA), also known simply as the Federals, was an Australian political party based in Queensland. ... The party was founded in May 1988 ... dissolved c. 2019.'
+
+Summary: 
+The Federal Party of Australia was founded on 5 May 1988 and dissolved around 2019.</div></details></div></details><details class="inner-node inner-think"><summary>think (113 chars)</summary><pre>I now have a good set of results. Let me also check the Rainbow Alliance to see if it's Australian and dissolved.</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Rainbow Alliance Australia political par"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://trove.nla.gov.au/newspaper/article/101982081" target="_blank" rel="noopener">Rainbow Alliance: a growing movement covers spectrum - Trove</a>
+
+FOR David Turbayne, the only hitch in an otherwise successful first meeting of the Rainbow Alliance in the ACT on March 4 was the ...
+
+2. <a href="https://www.josephcamilleri.org/content/rainbow-alliance-new-political-movement" target="_blank" rel="noopener">Rainbow Alliance: A New Political Movement | Joseph A. Camilleri</a>
+
+A new political movement bringing together people active in peace, environmental, gender, social justice and union issues.
+
+3. <a href="https://en.wikipedia.org/wiki/List_of_historical_political_parties_in_Australia" target="_blank" rel="noopener">List of historical political parties in Australia - Wikipedia</a>
+
+This is a list of historical political parties in Australia. These parties are no longer registered or a</div></details></div></details><details class="inner-node inner-think"><summary>think (253 chars)</summary><pre>The Rainbow Alliance was a political movement, not a registered party, and I can't find evidence it was formally dissolved as a political party. Let me check the Wikipedia page for historical Australian parties to see if there's anything else from 1988.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Find any Australian political parties founded in 1988 that were later dissolved as follows: 
+
+Evidence in page: 
+From the 'Parties without representation' table: 'AAP | N/a | Advance Australia Party | 1988-2005 | Nationalism Populism'. The full row includes: '| AAP | [Image] | Advance Australia Party | 1988-2005 | Nationalism Populism |'.
+
+Summary: 
+The only Australian political party founded in 1988 that was later dissolved is the Advance Australia Party (1988), which existed from 1988 to 2005 and was characterized by nationalism and populism.</div></details></div></details><details class="inner-node inner-think"><summary>think (731 chars)</summary><pre>The Wikipedia list of historical political parties in Australia only shows the Advance Australia Party (1988) as a party with 1988-2005. But I know from my other research that The Federal Party of Australia was also founded in 1988 and dissolved c. 2019, and the Fair Elections Coalition was founded in 1988 (as a lobby group) and deregistered in 1991. Let me also check if the Fair Elections Coalition is listed in the historical parties list.
+
+Let me also look for more information on the Fair Elections Coalition to confirm it was actually a political party (it was registered with the AEC and contested elections). And let me also check the Grokipedia page for Independent EFF to see if it was really "founded" in 1987 or 1988.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: grokipedia.com</summary><div class="inner-result-body">Find when the Independent EFF was actually founded/established and its full history as follows: 
+
+Evidence in page: 
+Independent EFF (Enterprise, Freedom, Family) was a minor Australian political party active in the late 20th century, emphasizing themes of enterprise, individual freedom, and family priorities. Registered with the Australian Electoral Commission on 3 November 1988, the party fielded candidates in state elections such as those in New South Wales, where it garnered modest vote shares but secured no parliamentary seats. The party was deregistered on 13 August 1999 after failing to maintain the required minimum of 500 members, marking the end of its operations.
+
+## History
+
+### Founding and early activities
+
+The Independent EFF (Enterprise, Freedom, Family) originated in 1987, </div></details></div></details><details class="inner-node inner-think"><summary>think (1094 chars)</summary><pre>So the Independent EFF originated in 1987 but was formally registered with the AEC on 3 November 1988. Depending on how strictly we interpret "founded," it could be considered founded either in 1987 or 1988.
+
+Let me now compile my findings. The Australian political parties that were:
+1. Founded/established in 1988 AND later dissolved/wound up:
+
+a) **Advance Australia Party (1988)** - Founded in 1988, deregistered by AEC on 5 December 2005 for failing to endorse a candidate in the previous four years [Wikipedia]
+b) **The Federal Party of Australia** - Founded on 5 May 1988, dissolved c. 2019 [Wikipedia]
+c) **Fair Elections Coalition** - Founded on 11 August 1988 as a lobby group, registered with AEC on 16 January 1989, deregistered on 26 July 1991 [Wikipedia]
+d) **Independent EFF** - Originated in 1987 but formally registered with AEC on 3 November 1988, deregistered on 13 August 1999 [Grokipedia/AEC]
+
+Not dissolved:
+e) **Australian Citizens Party** - Founded in 1988 but still active
+
+L</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Fair Elections Coalition ACT Wikipedia h"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/Fair_Elections_Coalition" target="_blank" rel="noopener">Fair Elections Coalition - Wikipedia</a>
+
+The Fair Elections Coalition (FEC) was an Australian political party that contested the first election for the Australian Capital Territory Legislative ...
+
+2. <a href="https://en.wikipedia.org/wiki/Fair_Elections_Act" target="_blank" rel="noopener">Fair Elections Act - Wikipedia</a>
+
+The Fair Elections Act is a statute enacted by the Conservative government in the 41st Canadian Parliament. It was introduced on February 4, 2014, ...
+
+3. <a href="https://en.wikipedia.org/wiki/Free_and_fair_election" target="_blank" rel="noopener">Free and fair election - Wikipedia</a>
+
+A free and fair election involves political freedoms and fair processes leading up to the vote, a fair count of eligible voters who cast a ballot.
+
+4. [Fair Representation Act (United States) - W</div></details></div></details><details class="inner-node inner-think"><summary>think (0 chars)</summary><pre></pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Check if Fair Elections Coalition is listed in the historical parties table on Wikipedia as follows: 
+
+Evidence in page: 
+The entire webpage content, including all tables and lists of historical political parties (Federal parliamentary parties, State parliamentary parties, Other represented parties, Parties without representation, etc.), does not contain the phrase 'Fair Elections Coalition'.
+
+Summary: 
+No, Fair Elections Coalition is not listed in the historical parties table on the Wikipedia page.</div></details></div></details><details class="inner-node inner-think"><summary>think (323 chars)</summary><pre>The Fair Elections Coalition is not listed in the Wikipedia historical parties list, but it did have its own Wikipedia article and was registered with the AEC. It was founded on 11 August 1988 and deregistered on 26 July 1991.
+
+Let me also check if there are any other parties I might have missed by searching specifically.</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australia political party "founded" OR ""</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/List_of_historical_political_parties_in_Australia" target="_blank" rel="noopener">List of historical political parties in Australia - Wikipedia</a>
+
+... Party" or the "National Party of Queensland". Jump up to: 1 2 3 4 Longest-serving party leader. ↑ The party was established as the "Queensland People's Party ...
+
+2. <a href="https://en.wikipedia.org/wiki/Daylight_Saving_Party" target="_blank" rel="noopener">Daylight Saving Party - Wikipedia</a>
+
+Founded, September 2016. Ideology · Single-issue party · WA Legislative ... "Daylight Saving Party formed to push for fifth Western Australian referendum".
+
+3. <a href="https://peo.gov.au/understand-our-parliament/history-of-parliament/history-milestones/australian-parliament-history-timeline" target="_blank" rel="noopener">Australian Parliament history timeline - Parliamentary Education Office</a>
+
+The High Court </div></details></div></details><details class="inner-node inner-think"><summary>think (134 chars)</summary><pre>Let me now compile all the information I have. Let me also do one more check to see if there are any other parties I might be missing.</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""1988" Australian political party dissol"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/Christopher_Pyne" target="_blank" rel="noopener">Christopher Pyne - Wikipedia</a>
+
+... Australian Young Liberals from 1988 to 1990. He was pre-selected as the Liberal candidate for the safe Labor seat of Ross Smith at the 1989 state election ...
+
+2. <a href="https://www.smh.com.au/national/legislators-need-the-courage-of-their-convictions-20081231-gdt85o.html" target="_blank" rel="noopener">Legislators need the courage of their convictions - SMH</a>
+
+... political mileage by pandering to the gun lobby. As a result, Labor lost every rural seat at the 1988 election. Unsworth knew the political risks but took ...
+
+3. <a href="https://www.afr.com/politics/maelstrom-sucks-in-wa-inc-players-19910328-k4aen" target="_blank" rel="noopener">MAELSTROM SUCKS IN WA INC PLAYERS - AFR</a>
+Date published: Mar 28, 1991
+
+Instead, Tony Lloyd was jailed for two years this week</div></details></div></details><details class="inner-node inner-think"><summary>think (972 chars)</summary><pre>Let me now compile my findings and prepare the report. Based on my research, here are the Australian political parties founded in 1988 that have since been dissolved/wound up:
+
+1. **Advance Australia Party (1988)** - Founded in 1988 as the Rex Connor Labor Party, deregistered by AEC on 5 December 2005.
+2. **The Federal Party of Australia** - Founded on 5 May 1988, dissolved c. 2019.
+3. **Fair Elections Coalition** - Founded on 11 August 1988 as a lobby group, registered with AEC on 16 January 1989, deregistered on 26 July 1991.
+4. **Independent EFF** - Originated in 1987 but formally registered with AEC on 3 November 1988, deregistered on 13 August 1999.
+
+Not dissolved:
+- **Australian Citizens Party** - Founded in 1988 but still active.
+
+Note: The Independent EFF technically originated in 1987 but was formally registered in 1988. The Fair Elections Coalition was founded in 1988 but registered with the AEC only in January 1989.
+
+Let me write the final report.</pre></details></div></details>
+</div>
+<div class="sub-card" id="n5">
+  <div class="sub-header">
+    <div class="sub-goal">Find ABC 1993/94 annual report parliamentary paper number</div>
+    <div class="sub-stats">7 steps</div>
+  </div>
+  <details class="sub-section">
+    <summary>Dispatched prompt</summary>
+    <pre>I need to find the ABC (Australian Broadcasting Corporation) annual report for the 1993/1994 fiscal year. Specifically, I need to find what parliamentary paper number or document number was assigned to this report. Please search for 'ABC annual report 1993-94 parliamentary paper number' or 'Australian Broadcasting Corporation annual report 1993-94'. The ABC is headquartered in Sydney, which is the largest city on Australia's eastern coast.</pre>
+  </details>
+  <details class="sub-section" open>
+    <summary>Returned report (1264 chars)</summary>
+    <div class="md"><p>The Australian Broadcasting Corporation (ABC) Annual Report for the 1993/1994 fiscal year was assigned <strong>Parliamentary Paper No. 248 of 1994 (PP no. 248 of 1994)</strong>.</p>
+<p>This is confirmed by multiple records from the National Library of Australia, which catalogued the report under this parliamentary paper number [1][2][3]. The report covered the ABC's activities and performance during the 1993/1994 period and was tabled in Parliament as an official government document.</p>
+<p>Note: This is distinct from the <em>Australian Broadcasting Authority</em> (ABA) Annual Report for the same period, which was a separate entity responsible for regulatory functions. The ABA's own annual report for 1993-94 had its own separate designation [4].</p>
+<h4>References</h4>
+<div class="ref-list"><div class="ref-item">[1] 1993/1994, PP no. 248 of 1994 — <a href="https://nla.gov.au/nla.obj-1665762169" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1665762169</a> (search snippet)</div><div class="ref-item">[2] 1993/1994, PP no. 248 of 1994 - National Library of Australia — <a href="https://nla.gov.au/nla.obj-1818339016" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1818339016</a> (search snippet)</div><div class="ref-item">[3] 1993/1994, PP no. 248 of 1994 - National Library of Australia — <a href="https://nla.gov.au/nla.obj-1818340957" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1818340957</a> (search snippet)</div><div class="ref-item">[4] AUSTRALIAN BROADCASTING AUTHORITY annual report 1993-94 — <a href="https://www.worldradiohistory.com/AUSTRALIA/Archive-ABCD-Annual-Reports/ABA-Annual-Report-1993-1994-.pdf" target="_blank" rel="noopener">https://www.worldradiohistory.com/AUSTRALIA/Archive-ABCD-Annual-Reports/ABA-Annual-Report-1993-1994-.pdf</a> (search snippet)</div></div>
+<p>---</p>
+<p>A</p></div>
+  </details>
+  <details class="sub-section"><summary>Inner trajectory (7 steps)</summary><div class="inner-flow"><div class="inner-node inner-user">📥 Dispatched prompt</div><details class="inner-node inner-think"><summary>think (211 chars)</summary><pre>The user wants to find the parliamentary paper number or document number assigned to the ABC (Australian Broadcasting Corporation) annual report for the 1993/1994 fiscal year. Let me search for this information.</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: "ABC annual report 1993-94 parliamentary "</summary><div class="inner-result-body">## Web Results
+1. <a href="https://nla.gov.au/nla.obj-1665762169" target="_blank" rel="noopener">1993/1994, PP no. 248 of 1994</a>
+
+Annual report of the Australian Broadcasting Corporation. 1993/1994, PP no. 248 of 1994; Browse this collection.
+
+2. [[PDF] AUSTRALIAN BROADCASTING AUTHORITY annual report 1993-94](<a href="https://www.worldradiohistory.com/AUSTRALIA/Archive-ABCD-Annual-Reports/ABA-Annual-Report-1993-1994-.pdf" target="_blank" rel="noopener">https://www.worldradiohistory.com/AUSTRALIA/Archive-ABCD-Annual-Reports/ABA-Annual-Report-1993-1994-.pdf</a>)
+
+The schedule covered existing ABC, SBS and parliamentary broadcasting radio services and approved extensions of ABC and SBS radio services. The extensions ...
+
+3. <a href="https://nla.gov.au/nla.obj-1818339016" target="_blank" rel="noopener">1993/1994, PP no. 248 of 1994 - National Library of Australia</a>
+
+Australian Broadcasting Corporation Annual Report 1993-94, 1. Contents, 2. Corporate Objectives, 3. ABC Services, 4 , 5. Highlights 1993-94, 6 , 7. ABC ...</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian Broadcasting Corporation annu"</summary><div class="inner-result-body">## Web Results
+1. [[PDF] AUSTRALIAN BROADCASTING AUTHORITY annual report 1993-94](<a href="https://www.worldradiohistory.com/AUSTRALIA/Archive-ABCD-Annual-Reports/ABA-Annual-Report-1993-1994-.pdf" target="_blank" rel="noopener">https://www.worldradiohistory.com/AUSTRALIA/Archive-ABCD-Annual-Reports/ABA-Annual-Report-1993-1994-.pdf</a>)
+
+About this Report. This Annual Report assesses the Australian Broadcasting Authority's performance in. 1993-94 as measured against its Corporate Plan 1993-96.
+
+2. <a href="https://nla.gov.au/nla.obj-1665762169" target="_blank" rel="noopener">1993/1994, PP no. 248 of 1994</a>
+
+Australian Broadcasting Corporation Annual Report 1993-94, 1. Contents, 2. Corporate Objectives, 3. ABC Services, 4 , 5. Highlights 1993-94, 6 , 7. ABC ...
+
+3. <a href="https://apo.org.au/node/63008" target="_blank" rel="noopener">Australian Broadcasting Authority: annual report 1993-1994 - APO</a>
+
+Annual report of the Commonwealth of Australia communications and broadcasting regulatory authority: the Australian B</div></details></div></details><details class="inner-node inner-think"><summary>think (271 chars)</summary><pre>The search results clearly show that the ABC Annual Report 1993/1994 was assigned parliamentary paper number PP no. 248 of 1994. This is confirmed by multiple National Library of Australia entries. Let me visit one of these NLA pages to get more details and confirm this.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: nla.gov.au</summary><div class="inner-result-body">Confirm the parliamentary paper number for the ABC annual report 1993/1994 as follows: 
+
+Evidence in page: 
+Title: 'Making sure you're not a bot!' and the markdown content describes Anubis proof-of-work. No mention of ABC annual report or parliamentary paper number.
+
+Summary: 
+The webpage is a security challenge page and does not provide any information regarding the ABC annual report 1993/1994 parliamentary paper number.</div></details></div></details><details class="inner-node inner-think"><summary>think (366 chars)</summary><pre>The NLA page is behind a security challenge. But the search results already clearly and consistently show "PP no. 248 of 1994" for the ABC Annual Report 1993/1994. Multiple NLA entries (nla.obj-1665762169, nla.obj-1818339016, nla.obj-1818340957) all list the same document as "1993/1994, PP no. 248 of 1994." I have enough information to provide a definitive answer.</pre></details></div></details>
+</div>
+<div class="sub-card" id="n6">
+  <div class="sub-header">
+    <div class="sub-goal">Find the dissolved Australian foundation</div>
+    <div class="sub-stats">31 steps</div>
+  </div>
+  <details class="sub-section">
+    <summary>Dispatched prompt</summary>
+    <pre>I'm looking for a now-dissolved non-profit organization/foundation in Australia that: (1) was founded around 1980 (the year SBS TV started), (2) ceased operations in the mid-1990s, (3) received Australian government funding that was cut in 1986 (year of Chernobyl disaster), (4) later participated in a national campaign promoting Australian-made products, (5) granted exactly 410 non-exclusive licenses in one financial year, and (6) gave awards named after itself. Please search for 'Australian foundation dissolved 1990s government funding cut 1986' and 'Australian organization 410 licenses non-exclusive'. Also try searching for organizations related to promoting Australian products like 'Think Australian' campaign.</pre>
+  </details>
+  <details class="sub-section" open>
+    <summary>Returned report (4447 chars)</summary>
+    <div class="md"><h3>The Advance Australia Foundation (AAF)</h3>
+<p>The organization matching all six criteria is the <strong>Advance Australia Foundation (AAF)</strong>, a now-dissolved Australian non-profit foundation.</p>
+<h4>Summary of Findings</h4>
+<p><strong>1. Founded around 1980 (year SBS TV started)</strong> The Advance Australia Foundation was formally incorporated in 1980 [1][2]. Some sources indicate it was initially established in 1979 under the name "Project Australia" before being formally incorporated as the AAF in 1980 [2]. SBS Television commenced full-time broadcasting on 24 October 1980 [3], aligning with the founding year.</p>
+<p><strong>2. Ceased operations in the mid-1990s</strong> The AAF went into voluntary liquidation in 1996. As confirmed in a 1998 Senate Hansard debate, the foundation closed approximately 10 months before mid-1998, following the withdrawal of federal government funding [4]. The logo administration reverted to the Australian government [5].</p>
+<p><strong>3. Received Australian government funding that was cut in 1986</strong> According to Wikipedia, the AAF was "for several years partly funded by the Federal Government" and "This ended in 1986 when the AAF become involved in the Australian Made campaign, which the Government decided it would prefer to fund directly" [1]. In 1986 — the year of the Chernobyl disaster — the government redirected funding for the Australian Made campaign away from the AAF to other channels. Additionally, the Howard Coalition government later withdrew remaining funding of $1.5 million in the first budget after the 1996 election, which led to the AAF's final liquidation [4][6].</p>
+<p><strong>4. Participated in a national campaign promoting Australian-made products</strong> The AAF administered the national "Australian Made" logo and ran the "Buy Australian Made" campaign from 1986 to 1996 [2][5]. The campaign asked consumers to buy Australian goods as a personal contribution to reducing import penetration [7]. The term "Think Australian" was used in media discourse about the foundation's efforts, described as "a precursor to buying Australian" [8].</p>
+<p><strong>5. Granted exactly 410 non-exclusive licenses in one financial year</strong> According to official parliamentary papers (PP no. 248 of 1987), "During the period 1 June 1985 to 30 June 1986 there were 410 Non-Exclusive licences granted, of which 350 or 85% represented companies with an annual turnover not exceeding $1 million per annum" [9]. These licenses were for the use of the "Australian Made" certification mark.</p>
+<p><strong>6. Gave awards named after itself</strong> The AAF gave the <strong>Advance Australia Award</strong> and the <strong>Special Merit Advance Australia Award</strong> to individuals and groups who made "outstanding contributions to the growth and enhancement of Australia, the Australian people and the Australian way of life" [1]. Notable recipients included Incat (1990), Wills Industries, and many others across fields including sport, community service, and the arts [1][2].</p>
+<h4>Additional Context</h4>
+<p>The AAF was a company limited by guarantee, incorporated in the Australian Capital Territory [2]. It operated as a partly government-funded entity designed to encourage consumer preference for local products and cultivate national pride in Australian manufacturing [2]. Upon its wind-up, the green and gold kangaroo "Australian Made" logo was transferred to the Australian Chamber of Commerce and Industry (ACCI) for continued administration [4].</p>
+<p>---</p>
+<h4>References</h4>
+<div class="ref-list"><div class="ref-item">[1] Advance Australia Foundation - Wikipedia — <a href="https://en.wikipedia.org/wiki/Advance_Australia_Foundation" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Advance_Australia_Foundation</a></div><div class="ref-item">[2] Advance Australia Foundation — Grokipedia — <a href="https://grokipedia.com/page/advance_australia_foundation" target="_blank" rel="noopener">https://grokipedia.com/page/advance_australia_foundation</a></div><div class="ref-item">[3] Our History - SBS About — <a href="https://www.sbs.com.au/aboutus/who-we-are/our-history/" target="_blank" rel="noopener">https://www.sbs.com.au/aboutus/who-we-are/our-history/</a></div><div class="ref-item">[4] Senate Official Hansard (3 July 1998) — <a href="https://www.aph.gov.au/binaries/hansard/senate/dailys/ds030798.pdf" target="_blank" rel="noopener">https://www.aph.gov.au/binaries/hansard/senate/dailys/ds030798.pdf</a></div><div class="ref-item">[5] History of Australian Made - The Australian Made Campaign — <a href="https://australianmade.com.au/why-buy-australian-made/history-of-australian-made" target="_blank" rel="noopener">https://australianmade.com.au/why-buy-australian-made/history-of-australian-made</a></div><div class="ref-item">[6] Hansard 16 May 2000 - Queensland Parliament — <a href="https://documents.parliament.qld.gov.au/events/han/2000/000516ha.pdf" target="_blank" rel="noopener">https://documents.parliament.qld.gov.au/events/han/2000/000516ha.pdf</a> (search snippet)</div><div class="ref-item">[7] MESSAGE IS BEGINNING TO GET THROUGH AT LAST - AFR — <a href="https://www.afr.com/companies/message-is-beginning-to-get-through-at-last-19900504-kamd1" target="_blank" rel="noopener">https://www.afr.com/companies/message-is-beginning-to-get-through-at-last-19900504-kamd1</a> (search snippet)</div><div class="ref-item">[8] REGULAR SHORTS - AFR — <a href="https://www.afr.com/politics/regular-shorts-19891208-jfrvz" target="_blank" rel="noopener">https://www.afr.com/politics/regular-shorts-19891208-jfrvz</a> (search snippet)</div><div class="ref-item">[9] 1985/1986, PP no. 248 of 1987 - National Library of Australia — <a href="https://nla.gov.au/nla.obj-1117248598" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1117248598</a></div></div></div>
+  </details>
+  <details class="sub-section"><summary>Inner trajectory (31 steps)</summary><div class="inner-flow"><div class="inner-node inner-user">📥 Dispatched prompt</div><details class="inner-node inner-think"><summary>think (464 chars)</summary><pre>Let me break down the clues:
+1. Founded around 1980 (same year SBS TV started - SBS started in November 1980)
+2. Ceased operations mid-1990s
+3. Australian government funding cut in 1986
+4. Participated in a national campaign promoting Australian-made products
+5. Granted exactly 410 non-exclusive licenses in one financial year
+6. Gave awards named after itself
+
+The "Think Australian" campaign is a key clue. Let me search for this and the other specific details.</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian foundation dissolved 1990s go"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://www.nytimes.com/1986/08/20/world/around-the-world-australian-government-presents-tough-budget.html" target="_blank" rel="noopener">AROUND THE WORLD; Australian Government Presents Tough ...</a>
+Date published: Aug 20, 1986
+
+The Labor Government handed down Australia's toughest budget in 20 years today, slashing billions of dollars off public spending.
+
+2. <a href="https://www.rba.gov.au/publications/confs/2000/kelly-address.html" target="_blank" rel="noopener">The Politics of Economic Change in Australia in the 1980s and 1990s</a>
+
+The 1980s saw the globalisation of the Australian economy; the 1990s saw this globalisation being contested in a new political struggle between globalists and ...
+
+3. [Cabinet papers show Paul Keating had a 'budget emergency' of his ...](<a href="https://www.theguardian.com/world/2013/dec/31/cabinet-papers-show-paul-ke" target="_blank" rel="noopener">https://www.theguardian.com/world/2013/dec/31/cabinet-papers-show-paul-ke</a></div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian organization 410 licenses non"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://legalvision.com.au/what-is-a-non-exclusive-licence/" target="_blank" rel="noopener">What Is a Non-Exclusive Intellectual Property (IP) Licence?</a>
+Date published: Mar 23, 2021
+
+A non-exclusive IP licence allows you to licence your IP to several parties, but continue to use your IP without limitations.
+
+2. <a href="https://www.ipaustralia.gov.au/manage-my-ip/how-to-commercialise-my-ip/how-to-license-my-ip" target="_blank" rel="noopener">How to license my IP - IP Australia</a>
+
+Non-exclusive licence ... More than one person or business has permission to use your IP, but you can still commercialise some aspects of it. Compulsory Licence.
+
+3. <a href="https://ipguardian.com.au/glossary/non-exclusive-licence/" target="_blank" rel="noopener">Non-Exclusive Licence - IP Guardian</a>
+
+A non-exclusive licence allows the IP owner to licence their IP to more than one party at a time. While</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Think Australian campaign foundation org"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://foundation.thinkanddotank.net.au/who-we-are" target="_blank" rel="noopener">Who We Are | Empowering Communities - Think+DO Tank Foundation</a>
+
+At Think+DO Tank Foundation, we build power, generate connections, and expand possibilities through the arts, working with excluded, disadvantaged, ...
+
+2. <a href="https://www.getup.org.au/" target="_blank" rel="noopener">Home | GetUp!</a>
+
+An independent movement to build a progressive Australia and bring participation back into our democracy.
+
+3. <a href="https://www.fya.org.au/" target="_blank" rel="noopener">Foundation for Young Australians (FYA)</a>
+
+The Foundation for Young Australians is a national non-profit that exists to back young people to beat injustice and transform the future.
+
+4. <a href="https://www.youtube.com/watch?v=lOio8IlgbNs" target="_blank" rel="noopener">Disconnected: Young Diverse Australians &amp; Politics - YouTube</a>
+Date published: Mar 19, 2025
+
+Your </div></details></div></details><details class="inner-node inner-think"><summary>think (2434 chars)</summary><pre>The initial searches didn't directly find the organization. Let me think about this more carefully:
+
+- Founded around 1980 (year SBS TV started)
+- Ceased operations mid-1990s
+- Government funding cut in 1986
+- Promoted Australian-made products (Think Australian campaign)
+- Granted exactly 410 non-exclusive licenses
+- Gave awards named after itself
+
+This sounds like it could be related to intellectual property or standards. The "Think Australian" campaign was a government initiative. Let me search more specifically for organizations that promoted Australian products and gave awards.
+
+Could this be the "Australian Made" foundation? Or perhaps something related to standards like Standards Australia? Let me think... The "Think Australian" campaign was run by the Australian Government in the late 1980s/early 1990s. 
+
+Wait - could this be the "Australian Manufacturers' Federation" or something similar? Or maybe an IP-related body?
+
+Let me think about the "410 non-exclusive licenses" clue. Th</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""Think Australian" campaign 1980s organi"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://www.facebook.com/groups/VoteGreens/posts/2817461381775032/" target="_blank" rel="noopener">Australian Labor Party's shift to centre right and environmental policies</a>
+Date published: May 10, 2025
+
+... election campaign. Albanese has let down the Left and failed ... Do you think Australian Labor has lost its way? Write to boss@crikey ...
+
+2. <a href="https://www.facebook.com/AndrewLeighMP/posts/predictable-scare-tactics-labor-introduces-serious-reform-and-the-liberals-bring/1562974255201272/" target="_blank" rel="noopener">Predictable scare tactics: Labor introduces serious reform and the ...</a>
+Date published: May 19, 2026
+
+Do you think Australian Labor has lost its way? Write to boss@crikey.com.au. Howard Marosi and Annie Angelo. 2 reactions ·. 3 comments. 󱎖. When ...
+
+3. [Panic about socialism : r/aussie - Reddit](<a href="https://www.reddit" target="_blank" rel="noopener">https://www.reddit</a></div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian non-profit founded 1980 disso"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/Kmart" target="_blank" rel="noopener">Kmart - Wikipedia</a>
+
+Its big-box stores sold a large variety of goods, including clothing, appliances, electronics, housewares, and food. The company began a slow decline in the ...
+
+2. <a href="https://www.youtube.com/watch?v=zEC9X2I2q_0" target="_blank" rel="noopener">15 Forgotten Aussie Products That Quietly Died in the 1980s</a>
+Date published: Mar 5, 2026
+
+The 1980s were a golden era for Australian supermarkets, corner stores, and TV commercials — but not every product survived the decade.
+
+3. <a href="https://www.facebook.com/groups/1313851385327540/posts/7658524454193503/" target="_blank" rel="noopener">Adelaide Milk Supply Co-operative Limited history - Facebook</a>
+Date published: Apr 9, 2024
+
+AMSCOL (Adelaide Milk Supply Co-Operative Limited) was a South Australian milk and ice cream company. It was founded </div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian foundation "410 licenses" OR "</summary><div class="inner-result-body">## Web Results
+1. [[PDF] Executive Summary - ACCC](<a href="https://www.accc.gov.au/system/files/public-registers/documents/D06%2B13571.pdf" target="_blank" rel="noopener">https://www.accc.gov.au/system/files/public-registers/documents/D06%2B13571.pdf</a>)
+Date published: Oct 15, 1997
+
+APRA states that it grants non-exclusive licenses for all of the works in its repertoire, enabling licensees to perform in public any of the ...
+
+2. <a href="https://www.lexology.com/library/detail.aspx?g=83fae112-fba1-47c5-a54c-8f0122e3b670" target="_blank" rel="noopener">Distributing patent rights between affiliates: guidelines to support ...</a>
+Date published: Nov 16, 2015
+
+Non-exclusive licenses. In the US, a non-exclusive licensee cannot sue for patent infringement damages. It cannot even join in the litigation ...
+
+3. [Identifying Key Provisions To Promote Global Access To Health ...](<a href="https://lesi.org/article-of-the-month/recent-experiences-in-policy-implementation" target="_blank" rel="noopener">https://lesi.org/article-of-the-month/recent-experiences-in-policy-implementation</a></div></details></div></details><details class="inner-node inner-think"><summary>think (953 chars)</summary><pre>Let me think about this differently. The clues mention:
+1. Founded ~1980 (year SBS TV started)
+2. Dissolved mid-1990s
+3. Government funding cut in 1986
+4. Promoted Australian-made products ("Think Australian" campaign)
+5. Granted exactly 410 non-exclusive licenses
+6. Awards named after itself
+
+The "Australian Made, Australian Grown" logo has been around since the 1980s. Let me look at that history page I found. Also, APRA grants non-exclusive licenses according to that ACCC document.
+
+Wait - could this be related to design rights or copyright? In Australia, there are several IP organizations. But the "promoting Australian products" and "awards" suggest it might be something like the "Australian Design Centre" or similar.
+
+Actually, let me reconsider. Could this be the "Standards Australia" board or a specific standards organization? Or perhaps the "Design Council of Australia"?
+
+Let me search for more specific terms related to these clues.</pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""Australian Made" foundation dissolved 1"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://www.facebook.com/SkyNewsAustralia/posts/a-celebrated-australian-business-that-powered-through-the-great-depression-and-t/1419901460167448/" target="_blank" rel="noopener">A celebrated Australian business that powered through the Great ...</a>
+Date published: May 5, 2026
+
+We should be backing local workers, local businesses and Australian made products before there's nothing left to save. #australia ...
+
+2. <a href="https://www.facebook.com/abcnews.au/posts/in-the-decades-after-world-war-ii-australias-manufacturing-industry-thrived-but-/10161506740264988/" target="_blank" rel="noopener">In the decades after World War II Australia's manufacturing industry ...</a>
+Date published: Jul 22, 2020
+
+The parallel imports legislation needs to be modified. Australian made goods have been 'too expensive' and imported goods have been better value ...
+</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Standards Australia foundation awards "n"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://www.lexology.com/library/detail.aspx?g=83fae112-fba1-47c5-a54c-8f0122e3b670" target="_blank" rel="noopener">Distributing patent rights between affiliates: guidelines to support ...</a>
+Date published: Nov 16, 2015
+
+Non-exclusive licenses. In the US, a non-exclusive licensee cannot sue for patent infringement damages. It cannot even join in the litigation ...
+
+2. [[PDF] Executive Summary - ACCC](<a href="https://www.accc.gov.au/system/files/public-registers/documents/D06%2B13571.pdf" target="_blank" rel="noopener">https://www.accc.gov.au/system/files/public-registers/documents/D06%2B13571.pdf</a>)
+Date published: Oct 15, 1997
+
+APRA states that it grants non-exclusive licenses for all of the works in its repertoire, enabling licensees to perform in public any of the ...
+
+3. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2726797/" target="_blank" rel="noopener">The licensing of DNA patents by large U.S. academic institutions</a>
+
+... non exclusive licenses. Th</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian Design Centre founded 1980 di"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://australiandesigncentre.com/latestnews/ADC-closure-what-will-be-lost/" target="_blank" rel="noopener">ADC's Impending Closure: What Will Be Lost</a>
+Date published: Mar 25, 2026
+
+After 62 years dedicated to presenting this country's best craft and design, Australian Design Centre is set to close permanently by 30 June ...
+
+2. <a href="https://www.smh.com.au/culture/art-and-design/mean-and-short-sighted-how-the-death-of-this-sydney-institution-shocked-an-abc-star-20260228-p5o69v.html" target="_blank" rel="noopener">'Mean and short-sighted': How the death of this Sydney institution ...</a>
+Date published: Apr 15, 2026
+
+The Australian Design Centre (ADC) is to close its doors just 12 weeks shy of its 62nd birthday after last-ditch protests to government went ...
+
+3. [The Australian Design Centre to cease operations - MGNSW](<a href="https://mgnsw.org" target="_blank" rel="noopener">https://mgnsw.org</a></div></details></div></details><details class="inner-node inner-think"><summary>think (2590 chars)</summary><pre>The Australian Design Centre was founded around 1964 and is closing in 2026 - that doesn't match. Let me look at the "Industry Commission Annual Report 1990-91" which mentions "Australian Made Campaign" and "$2 million for promotion of the Australian Made Campaign in 1991-92." This could be related to the Department of Analytical Services (DAS) or a similar body.
+
+Let me also look at the "History of Australian Made" page from australianmade.com.au, and search for the specific organization that ran the "Think Australian" campaign.
+
+Wait, I should think about this more carefully. The clue says "awards named after itself" - so the organization gave awards that had the organization's name. And it "granted exactly 410 non-exclusive licenses in one financial year."
+
+This sounds like it could be an intellectual property or design rights organization. In Australia, there was the "Design Board" or something similar. Or maybe it's related to the "Copyright Agency."
+
+Actually, let me reconsider. </pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""Think Australian" campaign organization"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://au.linkedin.com/in/adamferrier" target="_blank" rel="noopener">Adam Ferrier - Founder of Thinkerbell (Campaign's Global Agency ...</a>
+
+We are an agency of Thinkers and Tinkers and have extensive experience in the worlds of research, strategy and creative execution. We have helped some of ...
+
+2. <a href="https://www.instagram.com/reel/DWnXZDMDXnB/" target="_blank" rel="noopener">Think Australian – Bologna Your inside look at the ... - Instagram</a>
+Date published: Apr 1, 2026
+
+... likes, 0 comments - booksandpublishing on April 1, 2026: "Think Australian ... history-making itself needs to be saved.
+
+3. <a href="https://www.facebook.com/senatorpennywong/posts/weve-long-known-australia-cant-rely-on-all-the-old-assumptions-since-we-came-to-/1469891967825561/" target="_blank" rel="noopener">We've long known Australia can't rely on all the old assumptions ...</a>
+Date published: Jan</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Australian foundation 1980 dissolved 199"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/Copyright_law_of_Australia" target="_blank" rel="noopener">Copyright law of Australia - Wikipedia</a>
+
+The copyright law of Australia defines the legally enforceable rights of creators of creative and artistic works under Australian law.
+
+2. [[PDF] praeger perspectives - intellectual property and - ANU](<a href="https://www0.anu.edu.au/fellows/pdrahos/books/pdfs/Drahos_doing%20deals_07.pdf" target="_blank" rel="noopener">https://www0.anu.edu.au/fellows/pdrahos/books/pdfs/Drahos_doing%20deals_07.pdf</a>)
+
+Volume 4 takes the discussion to the global level, addressing a wide range of issues, including not only enforcement of IP protections across borders, but also ...
+
+3. <a href="https://www.rba.gov.au/publications/confs/2000/kelly-address.html" target="_blank" rel="noopener">The Politics of Economic Change in Australia in the 1980s and 1990s</a>
+
+The 1980s saw the globalisation of the Australian economy; the 1990s saw this globalisation b</div></details></div></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: australianmade.com.au</summary><div class="inner-result-body">Find information about organizations related to the Australian Made campaign, especially any foundation or body established around 1980 that was later dissolved as follows: 
+
+Evidence in page: 
+In 1986, the Australian Government commissioned the introduction of the Australian Made logo. It was designed by Melbourne graphic designer Ken Cato and officially launched by then Prime Minister Bob Hawke. It was to be administered by the Advance Australia Foundation for the next 10 years. The logo reverted back to the Australian Government when the Foundation went into voluntary liquidation in 1996.
+
+Summary: 
+The Advance Australia Foundation was established around 1986 to administer the Australian Made logo. It was later dissolved in 1996 when it went into voluntary liquidation. This foundation i</div></details></div></details><details class="inner-node inner-think"><summary>think (1433 chars)</summary><pre>Interesting! So we found the "Advance Australia Foundation" which:
+- Administered the Australian Made logo
+- Was commissioned in 1986
+- Went into voluntary liquidation in 1996
+
+But wait, the user says it was founded around 1980 (year SBS TV started). The Advance Australia Foundation seems to have been established around 1986. Let me check if this is the right organization or if there's more to it.
+
+Actually, let me re-read: "In 1986, the Australian Government commissioned the introduction of the Australian Made logo. It was designed by Melbourne graphic designer Ken Cato and officially launched by then Prime Minister Bob Hawke. It was to be administered by the Advance Australia Foundation for the next 10 years. The logo reverted back to the Australian Government when the Foundation went into voluntary liquidation in 1996."
+
+So the Advance Australia Foundation went into voluntary liquidation in 1996 - that matches "ceased operations in the mid-1990s." But was it founded in 1980? Let me </pre></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""Advance Australia Foundation" history f"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/Advance_Australia_Foundation" target="_blank" rel="noopener">Advance Australia Foundation - Wikipedia</a>
+
+The Advance Australia Foundation (AAF) was established in 1980. The AAF recognised individuals or groups who have made outstanding contributions to the growth ...
+
+2. [[PDF] SENATE Official Hansard - Parliament of Australia](<a href="https://www.aph.gov.au/binaries/hansard/senate/dailys/ds300496.pdf" target="_blank" rel="noopener">https://www.aph.gov.au/binaries/hansard/senate/dailys/ds300496.pdf</a>)
+Date published: Apr 30, 1996
+
+Advance Australia Foundation—Report for 1994-. 95. (Received by the Temporary Chairman of. Committees (Senator McGauran) on 4 January. 1996) ...
+
+3. [[PDF] Namatjira - The Academy of the Social Sciences in Australia](<a href="https://socialsciences.org.au/wp-content/uploads/2019/10/17%20Historical%20Dictionary%20N%20final.pdf" target="_blank" rel="noopener">https://socialsciences.org.au/wp-content/uploads/2019/10/17%20Historical%20Dictionary%20N%20final.pdf</a>)
+
+ADVANCE AUSTRALIA FOUNDATION. 289.</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""Advance Australia Foundation" 1980 1986"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://grokipedia.com/page/advance_australia_foundation" target="_blank" rel="noopener">Advance Australia Foundation — Grokipedia</a>
+
+Formally incorporated as the Advance Australia Foundation (AAF) in 1980, the organization operated as a partly government-funded entity designed to encourage ...
+
+2. <a href="https://dukeofed.com.au/long-standing-award-supporter-michael-crouch-awarded-the-companion-of-the-order-of-australia-in-the-queens-birthday-2017-honours-list/" target="_blank" rel="noopener">Long standing Award supporter Michael Crouch awarded the ...</a>
+Date published: Jun 11, 2017
+
+Director and NSW Chairman, Advance Australia Foundation. 1985 (to 1987). Member, National Committee for Development of Youth Employment. 1986 ...
+
+3. [History of Australian Made - The Australian Made Campaign](<a href="https://australianmade.com.au/why-buy-australian-m" target="_blank" rel="noopener">https://australianmade.com.au/why-buy-australian-m</a></div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""Advance Australia Foundation" "410" OR "</summary><div class="inner-result-body">## Web Results
+1. <a href="https://nla.gov.au/nla.obj-1117248598" target="_blank" rel="noopener">1985/1986, PP no. 248 of 1987 - National Library of Australia</a>
+
+ADVANCE AUSTRALIA FOUNDATION. Fix this text. (Formerly Advance Australia -. Fix ... 410 Non-Exclusive. Fix this text. licences granted, of which 350 or 85 ...
+
+2. <a href="https://www.afr.com/politics/democrats-lose-the-plot-with-labels-law-19940706-jfkc7" target="_blank" rel="noopener">DEMOCRATS LOSE THE PLOT WITH LABELS LAW - AFR</a>
+
+The Advance Australia Foundation licenses more than 68,000 products to use the "Australian Made" logo (the green and gold kangaroo). All of these goods were ...
+
+3. [[PDF] WORK OF THE SESSION - Parliament of Australia](<a href="https://www.aph.gov.au/-/media/05_About_Parliament/53_HoR/533_Research/WOTS/WOTS95A.PDF?la=en" target="_blank" rel="noopener">https://www.aph.gov.au/-/media/05_About_Parliament/53_HoR/533_Research/WOTS/WOTS95A.PDF?la=en</a>&amp;hash=99DF1B24AB6114374FBE974C334AAC5B2498CAB1)
+
+... 410. 247. 657. Q</div></details></div></details><details class="inner-node inner-think"><summary>think (828 chars)</summary><pre>Excellent! Now I've found the organization. It's the **Advance Australia Foundation** (AAF). Let me verify all the clues:
+
+1. Founded around 1980 - YES, "Formally incorporated as the Advance Australia Foundation (AAF) in 1980"
+2. Ceased operations mid-1990s - YES, went into voluntary liquidation in 1996
+3. Government funding cut in 1986 - Need to verify this
+4. Participated in "Think Australian" campaign - Need to verify
+5. Granted exactly 410 non-exclusive licenses - YES, from the NLA document: "410 Non-Exclusive licences granted"
+6. Awards named after itself - YES, "Advance Australia Foundation Award"
+
+Let me now get more details about:
+- The government funding cut in 1986
+- The "Think Australian" campaign participation
+- More details about the foundation
+
+Let me visit the Wikipedia page and other relevant sources.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Get comprehensive information about the Advance Australia Foundation - founding date, purpose, activities, government funding, dissolution, awards, and any campaigns it participated in as follows: 
+
+Evidence in page: 
+The Advance Australia Foundation (AAF) was established in 1980. The AAF recognised 'individuals or groups who have made outstanding contributions to the growth and enhancement of Australia, the Australian people and the Australian way of life'. It was wound up in the mid-1990s. Awards given by the AAF included the Advance Australia Award and the Special Merit Advance Australia Award. Recipients of the Advance Australia Award included: ... (list of recipients and years). The AAF was for several years partly funded by the Federal Government. This ended in 1986 when the AAF beco</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Visit: grokipedia.com</summary><div class="inner-result-body">Get comprehensive information about the Advance Australia Foundation - founding date, purpose, activities, government funding, dissolution, awards, and any campaigns it participated in as follows: 
+
+Evidence in page: 
+The **Advance Australia Foundation** was a partly government-funded Australian organization established in 1979, initially as Project Australia, with the primary purpose of promoting the sale and consumption of Australian-made products to bolster domestic industry and reduce import reliance. The foundation administered the national **Australian Made** logo—a certification mark for locally produced goods—from 1986 to 1996 as part of the Buy Australian Made campaign... Upon its winding up in 1996, logo oversight reverted to the Australian government, which continues the campaig</div></details></div></details><details class="inner-node inner-think"><summary>think (1121 chars)</summary><pre>Now I have a very clear picture. Let me verify the remaining details:
+
+1. Founded around 1980 - YES, formally incorporated in 1980 (some sources say established in 1979 as "Project Australia")
+2. Ceased operations mid-1990s - YES, wound up in 1996
+3. Government funding cut in 1986 - YES, according to Wikipedia: "This ended in 1986 when the AAF become involved in the Australian Made campaign, which the Government decided it would prefer to fund directly."
+4. Participated in a national campaign promoting Australian-made products - YES, the "Buy Australian Made" campaign and administering the Australian Made logo
+5. Granted exactly 410 non-exclusive licenses in one financial year - YES, from the NLA document: "410 Non-Exclusive licences granted, of which 350 or 85..."
+6. Gave awards named after itself - YES, the "Advance Australia Award" and "Special Merit Advance Australia Award"
+
+Now let me check on the "Think Australian" campaign connection. The user mentioned this specifically. Let me</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: nla.gov.au</summary><div class="inner-result-body">Confirm that the Advance Australia Foundation granted exactly 410 non-exclusive licences in one financial year, and find what year this was as follows: 
+
+Evidence in page: 
+During the period 1 June 1985 to 30 June 1986 there were 410 Non-Exclusive licences granted, of which 350 or 85% represented companies with an annual turnover not exceeding $1 million per annum.
+
+Summary: 
+The Advance Australia Foundation granted exactly 410 non-exclusive licences during the financial year from 1 June 1985 to 30 June 1986.
+&lt;/tool_response&gt;
+&lt;tool_response&gt;</div></details></div></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: "SBS TV Australia started 1980"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://en.wikipedia.org/wiki/Special_Broadcasting_Service" target="_blank" rel="noopener">Special Broadcasting Service - Wikipedia</a>
+
+SBS is one of five main free-to-air networks in Australia. SBS was founded in 1975 as a radio network and launched its television channel in 1980. In-show ...
+
+2. <a href="https://www.nfsa.gov.au/collection/item/sbs-television-liz-jacka" target="_blank" rel="noopener">SBS Television: Liz Jacka - NFSA</a>
+
+SBS Television went to air on Friday 24 October 1980. The first program screened by SBS was a documentary by Peter Luck about the history of Australian ...
+
+3. <a href="https://www.sbs.com.au/aboutus/who-we-are/our-history/" target="_blank" rel="noopener">Our History - SBS About</a>
+Date published: Mar 24, 2020
+
+Full-time transmission began on 24 October 1980 (United Nations Day), broadcasting in Sydney and Melbourne. The first program shown was a ...</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""Advance Australia Foundation" "Think Au"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://link.springer.com/article/10.1023/A:1006856704983" target="_blank" rel="noopener">Buy Australian Made | Journal of Consumer Policy - Springer Nature</a>
+
+This logo is provided by the Advance Australia Foundation as a part of the Buy Australian Made campaign, started in 1986 to reduce the Australian import ...
+
+2. <a href="https://australianmade.com.au/why-buy-australian-made/history-of-australian-made" target="_blank" rel="noopener">History of Australian Made - The Australian Made Campaign</a>
+
+Where to buy Australian Made · Top Aussie Products · New Products ... It was to be administered by the Advance Australia Foundation for the next 10 years.
+
+3. <a href="https://grokipedia.com/page/advance_australia_foundation" target="_blank" rel="noopener">Advance Australia Foundation — Grokipedia</a>
+
+The Advance Australia Foundation launched the "Buy Australian Made" campaign in 1986 as</div></details></div></details><details class="inner-node inner-think"><summary>think (1399 chars)</summary><pre>Now I have all the pieces confirmed:
+
+1. **Founded around 1980**: YES - Formally incorporated as Advance Australia Foundation in 1980 (some sources say established in 1979 as "Project Australia"). SBS TV started on 24 October 1980, matching the clue.
+
+2. **Ceased operations mid-1990s**: YES - Wound up in 1996 (voluntary liquidation).
+
+3. **Government funding cut in 1986**: YES - According to Wikipedia: "This ended in 1986 when the AAF become involved in the Australian Made campaign, which the Government decided it would prefer to fund directly." The Chernobyl disaster happened on April 26, 1986.
+
+4. **Participated in a national campaign promoting Australian-made products**: YES - The "Buy Australian Made" campaign started in 1986. Also referred to as the "Australian Made" campaign. The user mentioned "Think Australian" but the actual name was "Buy Australian Made."
+
+5. **Granted exactly 410 non-exclusive licenses in one financial year**: YES - From the NLA document: "During the period </pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: www.aph.gov.au</summary><div class="inner-result-body">Get details about the Advance Australia Foundation's report for 1994-95, its activities, and any information about its closure or wind-up as follows: 
+
+Evidence in page: 
+Advance Australia Logo Protection Act— Advance Australia Foundation—Report for 1994-95. ( Received by the Temporary Chairman of Committees (Senator McGauran) on 4 January 1996 ).
+
+Summary: 
+The webpage content only notes that the Advance Australia Foundation's report for 1994-95 was tabled in the Senate under the Advance Australia Logo Protection Act. No details about the foundation's activities, financials, or any closure or wind-up are provided.
+&lt;/tool_response&gt;
+&lt;tool_response&gt;</div></details></div></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""Advance Australia Foundation" "Think Au"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://link.springer.com/article/10.1023/A:1006856704983" target="_blank" rel="noopener">Buy Australian Made | Journal of Consumer Policy - Springer Nature</a>
+
+This logo is provided by the Advance Australia Foundation as a part of the Buy Australian Made campaign, started in 1986 to reduce the Australian import ...
+
+2. <a href="https://australianmade.com.au/why-buy-australian-made/history-of-australian-made" target="_blank" rel="noopener">History of Australian Made - The Australian Made Campaign</a>
+
+It was to be administered by the Advance Australia Foundation for the next 10 years. ... The 'Buy Australian' campaign is supported by the Australian Government ...
+
+3. <a href="https://www.afr.com/companies/message-is-beginning-to-get-through-at-last-19900504-kamd1" target="_blank" rel="noopener">MESSAGE IS BEGINNING TO GET THROUGH AT LAST - AFR</a>
+
+Since August 1986, the Advance Austra</div></details></div></details><details class="inner-node inner-think"><summary>think (1374 chars)</summary><pre>Now let me verify the "Think Australian" campaign connection. Looking at the search results, it appears that the Advance Australia Foundation ran campaigns called:
+1. "Advance Australia"
+2. "Buy Australian"
+3. "Australian Made"
+
+The user mentioned "Think Australian" - but perhaps this is a misremembering or it could be an informal name used in some contexts. Let me check if there's any reference to "Think Australian" specifically associated with this foundation.
+
+Actually, looking more carefully at one result from Emerald: "The Advance Australia Foundation's regular 'Advance Australia', 'Buy Australian' and 'Australian Made' campaigns..." 
+
+Let me check whether there was actually a "Think Australian" campaign separate from these.
+
+Actually, wait - let me reconsider. There IS a campaign called "Think Australian" which might have been run by a different entity, or it could be the same as the "Buy Australian Made" campaign. But the user's question says "later participated in a national ca</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: www.aph.gov.au</summary><div class="inner-result-body">Find information about the Advance Australia Foundation, its role, and the government's decision to end its funding in 1986 and its wind-up in 1996 as follows: 
+
+Evidence in page: 
+The content does not contain any information about the Advance Australia Foundation. The only related term appears in Senator Mackay's question: 'Given that the parliament, as you know, has regarded this issue as sufficiently important to have set up this committee, what role, if any, would you see the federal government having in relation to assisting with advertising and so on?' ... 'Government assistance has been provided for similar sorts of campaigns in the past. You would not see that the federal government may have an interest in ensuring the success of this code of conduct, in a pecuniary sense?' ... 'We</div></details></div></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""Advance Australia Foundation" "Think Au"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://www.afr.com/politics/regular-shorts-19891208-jfrvz" target="_blank" rel="noopener">REGULAR SHORTS - AFR</a>
+
+... think Australian, a precursor to buying Australian. While I take issue with ... Advance Australia Foundation,. Melbourne. Save. Log in or Subscribe to ...
+
+2. <a href="https://parlinfo.aph.gov.au/parlInfo/search/display/display.w3p;query=Id%3A%22media%2Ftvprog%2Ftrxbu743%22;src1=sm1" target="_blank" rel="noopener">PROBLEMS WITH DESIGNING AND MANUFACTURING ... - ParlInfo</a>
+
+I think Australian designs are probably above dreadful little pink flowers on jumpers. ... Advance Australia Foundation, you'd see which one was Australian made.</div></details></div></details><details class="inner-node inner-think"><summary>think (395 chars)</summary><pre>Interesting! The first result from the AFR mentions "think Australian, a precursor to buying Australian" in the context of the Advance Australia Foundation. So it seems like "Think Australian" was indeed used as a phrase associated with the campaign. Let me visit that page for more details.
+
+Also, let me check the Senate Hansard from 1996 which might have more details about the AAF's wind-up.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: www.afr.com</summary><div class="inner-result-body">Find the context in which 'think Australian' is mentioned in relation to the Advance Australia Foundation and buying Australian products as follows: 
+
+Evidence in page: 
+The webpage content includes the title 'REGULAR SHORTS' and the following text: 'NO DIFFICULTY IN BUYING AUSTRALIAN' and 'SIR, As David Clark's average Australian ("On the Other Hand" AFR, December 5) (and proud of it) I don't know whether to laugh or cry at his comments about replacing imports with Australian made.' No mention of 'think Australian' or 'Advance Australia Foundation' is present.
+
+Summary: 
+The article appears to be a response to David Clark's column about buying Australian products, but the specific terms 'think Australian' and 'Advance Australia Foundation' are not mentioned in the provided content. The ev</div></details></div></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: ""Advance Australia Foundation" governmen"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://www.afr.com/companies/a-fairly-happy-birthday-for-australian-made-19910920-k9xok" target="_blank" rel="noopener">A FAIRLY HAPPY BIRTHDAY FOR 'AUSTRALIAN MADE' - AFR</a>
+Date published: Sep 20, 1991
+
+... Advance Australia Foundation -- the non-profit organisation that ... buy Australian products simply because they are Australian. "From ...
+
+2. <a href="https://grokipedia.com/page/advance_australia_foundation" target="_blank" rel="noopener">Advance Australia Foundation — Grokipedia</a>
+
+The Advance Australia Foundation launched the "Buy Australian Made" campaign in 1986 as a key non-award effort to counter rising import penetration, which ...
+
+3. <a href="https://www.emerald.com/jhrm/article/8/3/375/223164/It-s-time-revolution-and-evolution-in-Australian" target="_blank" rel="noopener">“It's time”: revolution and evolution in Australian political advertising</a>
+
+The Advance Aust</div></details></div></details><details class="inner-node inner-think"><summary>think (3081 chars)</summary><pre>Excellent! Now I have strong confirmation:
+
+From the Queensland Parliament Hansard (May 2000): "of the Howard/Liberal Government in August 1996 was to withdraw $2m in funding from the Advance Australia Foundation."
+
+And from the Senate Hansard (July 1998): "When the coalition came to office, it cut the funding for the Advance Australia Foundation."
+
+Wait - there seems to be some discrepancy. Wikipedia says government funding ended in 1986 when AAF became involved in the Australian Made campaign. But other sources suggest the Howard Coalition government withdrew funding in August 1996.
+
+Let me reconcile this:
+- The Wikipedia article says: "This ended in 1986 when the AAF become involved in the Australian Made campaign, which the Government decided it would prefer to fund directly."
+- The Queensland Parliament Hansard says the Howard/Liberal Government withdrew $2m in funding from AAF in August 1996.
+- The Senate Hansard says "When the coalition came to office, it cut the funding for the</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: pmtranscripts.pmc.gov.au</summary><div class="inner-result-body">Find information about the Advance Australia Foundation, its role in promoting Australian products, and any details about its activities and relationship with the government as follows: 
+
+Evidence in page: 
+The Advance Australia Foundation has arranged for the National Industry Extension Service and the Industrial Supplies Office to assess the quality of licensees' products for export quality, and advise on how quality can be improved. I am pleased to see that the public and private sectors are collaborating to help Australian producers improve the export quality of their products. Self-improvement initiatives of this sort help our local industries and therefore Australia meet the challenges of a tough and increasingly competitive world. The Government is also playing its part. ... We are </div></details></div></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: www.aph.gov.au</summary><div class="inner-result-body">Get details about the Senate debate on the Advance Australia Foundation, its wind-up, and the government's decision regarding its funding as follows: 
+
+Evidence in page: 
+From Senator Neal (page 4869): 'There is an issue I wish to speak briefly about in the few minutes I have, and that is the green and gold kangaroo, the made in Australia logo that used to be administered by the Advance Australia Foundation. A very successful and respected organisation in the community it was. It essentially administered the licensing of the logo that people were able to rely on as indicating an Australian product. In the first budget after this government was elected, the funding provided to it by the federal government was completely scrapped. It was not a huge amount of money; in the scheme of things it</div></details></div></details><details class="inner-node inner-think"><summary>think (1816 chars)</summary><pre>Now I have a very comprehensive picture. Let me summarize all the findings:
+
+The organization is the **Advance Australia Foundation (AAF)**.
+
+Key facts:
+1. **Founded around 1980**: Formally incorporated in 1980 (some sources say established in 1979 as "Project Australia"). SBS TV started on 24 October 1980, matching the year.
+
+2. **Ceased operations mid-1990s**: Went into voluntary liquidation in 1996, after the Howard government cut its $1.5 million funding in the first budget after the 1996 election. A senator's constituent was told the AAF had closed 10 months before the 1998 Senate debate, i.e., around late 1996/early 1997.
+
+3. **Government funding cut in 1986**: According to Wikipedia, the AAF was "for several years partly funded by the Federal Government" and "This ended in 1986 when the AAF become involved in the Australian Made campaign, which the Government decided it would prefer to fund directly." This is the 1986 connection. (There was also a second cut in 1996 by the Howar</pre></details></div></details>
+</div></div></div>
+</details>
+
+<details class="node node-think" id="n8">
+  <summary class="node-title">think (2852 chars)</summary>
+  <div class="node-body"><pre>The sub-agents have provided comprehensive information. Let me verify the key findings:
+
+1. **SBS TV started in 1980** - confirmed
+2. **Advance Australia Foundation (AAF)** was founded in 1980 - matches
+3. **Ceased operations mid-1990s** - went into voluntary liquidation in 1996 - matches
+4. **Shares name with a political party founded in 1988** - The Advance Australia Party was founded in 1988 and dissolved in 2005 - matches "Advance Australia"
+5. **410 non-exclusive licenses** - PP no. 248 of 1987 confirms exactly 410 non-exclusive licences granted during 1 June 1985 to 30 June 1986 - matches
+6. **Funded by Australian government, cut in 1986 (Chernobyl year)** - matches
+7. **Participated in "Australian Made" campaign** - a national campaign promoting domestic products - matches
+8. **Parliamentary document number 248 of 1994** - same as ABC's 1993/94 annual report (PP no. 248 of 1994) - this is a key match! The AAF's 1985/86 report was also PP no. 248 of 1987, and the question says the AAF published a parliamentary document with the same number as the ABC's 1993/94 report, which is 248. The AAF's 1985/86 report (PP 248/1987) and the ABC's 1993/94 report (PP 248/1994) both have the number 248. This is a different year but the same paper number format.
+9. **Gave awards named after itself** - "Advance Australia Award" - matches
+
+Wait, let me re-read the clue about the parliamentary document more carefully: "该组织曾发布一份议会文件，其编号与一家其总部位于该国东部沿海最大城市的国家级公共广播公司，在1994年发布的关于1993/1994财年的年度报告所使用的议会文件编号完全相同"
+
+Translation: "The organization published a parliamentary document whose number is exactly the same as the parliamentary document number used by a national public broadcaster headquartered in the largest city on the eastern coast of that country, for its annual report published in 1994 about the 1993/1994 fiscal year."
+
+So the AAF published a parliamentary document with the same number (248) as the ABC's 1993/94 annual report (PP 248 of 1994). The AAF's own report was PP 248 of 1987. Both are numbered 248. This matches!
+
+Let me verify one more thing - the political party connection. The question says "与某个成立于1988年的已解散政治党派同名的基金会" - a foundation that shares its name with a dissolved political party founded in 1988. The "Advance Australia Party" (1988) and the "Advance Australia Foundation" share the name "Advance Australia." This seems to be the match.
+
+All constraints are satisfied. The answer is **Advance Australia Foundation** (澳洲前进基金会).
+
+Let me verify the parliamentary paper number claim more carefully. The question says the AAF published a parliamentary document with the same number as the ABC's 1993/94 annual report. The ABC's report was PP no. 248 of 1994. The AAF's report was PP no. 248 of 1987. Both are "248" - the number is the same. This works.
+
+I'm confident the answer is the Advance Australia Foundation.</pre></div>
+</details>
+
+<details class="node node-sub-branch" id="n11">
+  <summary class="node-title">call_sub_agent → 2 parallel sub-agents</summary>
+  <div class="node-body"><div class="sub-branches">
+<div class="sub-card" id="n9">
+  <div class="sub-header">
+    <div class="sub-goal">Verify AAF and Advance Australia Party details</div>
+    <div class="sub-stats">5 steps</div>
+  </div>
+  <details class="sub-section">
+    <summary>Dispatched prompt</summary>
+    <pre>Please visit the Wikipedia page for the Advance Australia Foundation at <a href="https://en.wikipedia.org/wiki/Advance_Australia_Foundation" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Advance_Australia_Foundation</a> and the page for the Advance Australia Party (1988) at <a href="https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988</a>). I need to confirm: (1) the AAF was founded in 1980, (2) the AAF ceased operations in the mid-1990s, (3) the political party was founded in 1988, (4) both share the name 'Advance Australia', and (5) any details about the AAF's awards and licensing activities.</pre>
+  </details>
+  <details class="sub-section" open>
+    <summary>Returned report (2764 chars)</summary>
+    <div class="md"><h3>Findings: Advance Australia Foundation and Advance Australia Party (1988)</h3>
+<p>Based on my review of both Wikipedia pages, here are the confirmed details:</p>
+<h4>(1) The AAF was founded in 1980 — ✅ CONFIRMED</h4>
+<p>The Advance Australia Foundation was established in 1980 [1].</p>
+<h4>(2) The AAF ceased operations in the mid-1990s — ✅ CONFIRMED</h4>
+<p>The AAF was "wound up in the mid-1990s" [1]. Its awards were given through at least 1995 based on the recipient lists.</p>
+<h4>(3) The political party was founded in 1988 — ✅ CONFIRMED</h4>
+<p>The Advance Australia Party was founded in 1988, originally under the name "Rex Connor Labor Party" by Rex Connor Jnr [2].</p>
+<h4>(4) Both share the name 'Advance Australia' — ✅ CONFIRMED</h4>
+<p>Both organizations carry the name "Advance Australia" in their titles:</p>
+<ul><li><strong>Advance Australia Foundation (AAF)</strong></li><li><strong>Advance Australia Party (AAP)</strong></li></ul>
+<p>They are, however, completely separate and unrelated organizations. The AAF is a non-partisan body that recognized individuals and groups for contributions to Australia, while the Advance Australia Party is a political party with Australian nationalist and populist ideology [1][2].</p>
+<h4>(5) AAF Awards and Licensing Activities</h4>
+<p><strong>Awards:</strong> The AAF administered two main awards [1]:</p>
+<ul><li><strong>Advance Australia Award</strong> — given to individuals or groups who made "outstanding contributions to the growth and enhancement of Australia, the Australian people and the Australian way of life"</li><li><strong>Special Merit Advance Australia Award</strong></li></ul>
+<p>Notable recipients included Professor Fred Hollows, Little River Band, and the yacht Australia II. Recipients are listed by year from 1980 through the mid-1990s.</p>
+<p><strong>Licensing / Australian Made Campaign:</strong> The AAF was partly funded by the Federal Government until 1986, when it became involved in the <strong>Australian Made</strong> campaign. The government decided it would prefer to fund the Australian Made campaign directly, which ended the AAF's government funding. Remaining funds were transferred to a trust [1].</p>
+<p><strong>Post-2012:</strong> Since 2012, the Federal Government has funded separate annual "Advance Awards" (a different program) for innovation and achievement, specifically for Australian citizens who live overseas or have done so in the past [1].</p>
+<p><strong>Key Distinction:</strong> The AAF (1980–mid-1990s) and the Advance Australia Party (1988–2005) are entirely separate entities that happen to share a name. The AAF was a non-partisan recognition body, while the party was a minor political party focused on Australian nationalism and populism, headquartered in Wollongong, NSW [1][2].</p>
+<p>---</p>
+<h4>References</h4>
+<div class="ref-list"><div class="ref-item">[1] Advance Australia Foundation — <a href="https://en.wikipedia.org/wiki/Advance_Australia_Foundation" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Advance_Australia_Foundation</a></div><div class="ref-item">[2] Advance Australia Party (1988) — <a href="https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988</a>)</div></div>
+<p>---</p>
+<p>A</p></div>
+  </details>
+  <details class="sub-section"><summary>Inner trajectory (5 steps)</summary><div class="inner-flow"><div class="inner-node inner-user">📥 Dispatched prompt</div><details class="inner-node inner-think"><summary>think (229 chars)</summary><pre>The user wants me to visit two Wikipedia pages and confirm specific details about the Advance Australia Foundation and the Advance Australia Party (1988). Let me visit both pages simultaneously since they're independent requests.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Extract founding dates, cessation dates, organizational details, naming conventions, awards, licensing activities, and any other key facts about both the Advance Australia Foundation and the Advance Australia Party (1988). as follows: 
+
+Evidence in page: 
+The **Advance Australia Foundation** (AAF) was established in 1980. The AAF recognised "individuals or groups who have made outstanding contributions to the growth and enhancement of Australia, the Australian people and the Australian way of life". It was wound up in the mid-1990s.
+
+Awards given by the AAF included the Advance Australia Award and the Special Merit Advance Australia Award. Recipients of the Advance Australia Award included:
+... (long list of recipients by year) …
+
+The AAF was for several years partly funded by the Federal </div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Visit: en.wikipedia.org</summary><div class="inner-result-body">Extract founding dates, cessation dates, organizational details, naming conventions, awards, licensing activities, and any other key facts about both the Advance Australia Foundation and the Advance Australia Party (1988). as follows: 
+
+Evidence in page: 
+From the infobox: 
+- Leader: Rex Connor Jnr
+- Founded: 1988
+- Dissolved: 2005
+- Headquarters: Wollongong, NSW 2500
+- Ideology: Australian nationalism, Populism
+
+From the article:
+- Originally named the Rex Connor Labor Party (1988)
+- Party deregistered on 5 December 2005 for failing to endorse a candidate in the previous four years
+- Contested federal elections in 1990 (Cunningham: 12.8%), 1993 (Throsby: 10.48%), and last in 2001
+- A separate NSW party of the same name formed in 2019, led by Ray Brown
+
+Summary: 
+The Advance Australia Part</div></details></div></details><details class="inner-node inner-think"><summary>think (116 chars)</summary><pre>I have all the information needed to provide a comprehensive report. Let me synthesize the findings from both pages.</pre></details></div></details>
+</div>
+<div class="sub-card" id="n10">
+  <div class="sub-header">
+    <div class="sub-goal">Verify parliamentary paper numbers match</div>
+    <div class="sub-stats">6 steps</div>
+  </div>
+  <details class="sub-section">
+    <summary>Dispatched prompt</summary>
+    <pre>Please visit the National Library of Australia page for the Advance Australia Foundation's parliamentary paper: <a href="https://nla.gov.au/nla.obj-1117248598" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1117248598</a> and also search for 'Advance Australia Foundation PP 248 1987' to confirm that the AAF's annual report was indeed designated as Parliamentary Paper No. 248 of 1987. Also please confirm that the ABC's 1993/94 annual report was PP No. 248 of 1994 by visiting <a href="https://nla.gov.au/nla.obj-1665762169" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1665762169</a> or searching for it.</pre>
+  </details>
+  <details class="sub-section" open>
+    <summary>Returned report (2464 chars)</summary>
+    <div class="md"><h3>Confirmation of Parliamentary Paper Designations</h3>
+<h4>1. Advance Australia Foundation — PP No. 248 of 1987</h4>
+<p><strong>Confirmed.</strong> The National Library of Australia catalogue entry at <code><a href="https://nla.gov.au/nla.obj-1117248598" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1117248598</a></code> identifies the document as:</p>
+<ul><li><strong>Title:</strong> <em>Report to the Parliament of the Commonwealth of Australia / Advance Australia Foundation</em></li><li><strong>Creator:</strong> Advance Australia Foundation</li><li><strong>Issue statement:</strong> "1985/1986, PP no. 248 of 1987"</li><li><strong>Content:</strong> The AAF's Annual Report 1985–86, published pursuant to section 18 of the <em>Advance Australia Logo Protection Act 1984</em> [1]</li></ul>
+<p>A second NLA record for a later AAF report (1987/1988) is catalogued as "PP no. 67 of 1989", confirming that the AAF's reports were serially numbered parliamentary papers — with the 1985/86 edition specifically carrying number 248 of 1987 [2].</p>
+<h4>2. Australian Broadcasting Corporation — PP No. 248 of 1994</h4>
+<p><strong>Confirmed.</strong> Although the direct NLA page at <code><a href="https://nla.gov.au/nla.obj-1665762169" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1665762169</a></code> was blocked by a bot-detection challenge when visited, the document is unambiguously identified in NLA search results as:</p>
+<ul><li><strong>Title:</strong> <em>Australian Broadcasting Corporation Annual Report 1993-94</em></li><li><strong>Designation:</strong> "1993/1994, PP no. 248 of 1994"</li></ul>
+<p>This appears across multiple NLA catalogue entries (including objects nla.obj-1665762169, nla.obj-1818340957, and nla.obj-1818340879), all consistently listing it as PP No. 248 of 1994 [3][4][5].</p>
+<h4>Summary</h4>
+<p>Both parliamentary paper designations are verified:</p>
+<ul><li><strong>AAF Annual Report 1985/86</strong> = <strong>PP No. 248 of 1987</strong></li><li><strong>ABC Annual Report 1993/94</strong> = <strong>PP No. 248 of 1994</strong></li></ul>
+<p>It is worth noting that both documents happen to share the same parliamentary paper number (248) in different years, which is not unusual given the high volume of parliamentary papers tabled each year in the Australian Parliament.</p>
+<p>---</p>
+<p><strong>References</strong></p>
+<div class="ref-list"><div class="ref-item">[1] 1985/1986, PP no. 248 of 1987 - National Library of Australia — <a href="https://nla.gov.au/nla.obj-1117248598" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1117248598</a></div></div>
+<div class="ref-list"><div class="ref-item">[2] 1986-1987, PP no. 67 of 1989 - National Library of Australia — <a href="https://nla.gov.au/nla.obj-2037526634" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-2037526634</a> (search snippet)</div></div>
+<div class="ref-list"><div class="ref-item">[3] 1993/1994, PP no. 248 of 1994 - National Library of Australia — <a href="https://nla.gov.au/nla.obj-1665762169" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1665762169</a> (search snippet)</div></div>
+<div class="ref-list"><div class="ref-item">[4] 1993/1994, PP no. 248 of 1994 - National Library of Australia — <a href="https://nla.gov.au/nla.obj-1818340957" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1818340957</a> (search snippet)</div></div>
+<div class="ref-list"><div class="ref-item">[5] 1993/1994, PP no. 248 of 1994 - National Library of Australia — <a href="https://nla.gov.au/nla.obj-1818340879" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1818340879</a> (search snippet)</div></div></div>
+  </details>
+  <details class="sub-section"><summary>Inner trajectory (6 steps)</summary><div class="inner-flow"><div class="inner-node inner-user">📥 Dispatched prompt</div><details class="inner-node inner-think"><summary>think (309 chars)</summary><pre>The user wants me to:
+1. Visit the NLA page for the Advance Australia Foundation's parliamentary paper
+2. Search for 'Advance Australia Foundation PP 248 1987' to confirm the designation
+3. Visit the NLA page for ABC's 1993/94 annual report or search for it
+
+Let me do all of these in parallel where possible.</pre></details><details class="inner-node inner-tool"><summary>🔧 visit</summary><div class="inner-result"><details class="inner-result-detail"><summary>Visit: nla.gov.au</summary><div class="inner-result-body">Get the title, year, and any information about the document, including whether it is designated as Parliamentary Paper No. 248 of 1987 (for AAF) or PP No. 248 of 1994 (for ABC) as follows: 
+
+Evidence in page: 
+Title in breadcrumb: '1985/1986, PP no. 248 of 1987'.
+Document title: 'Report to the Parliament of the Commonwealth of Australia / Advance Australia Foundation'.
+Creator: 'Advance Australia Foundation'.
+Issue statement: 'Issue 1985/1986, PP no. 248 of 1987'.
+Text includes 'ADVANCE AUSTRALIA FOUNDATION Annual Report 1985-86' and 'PURSUANT TO SECTION 18 OF THE ADVANCE AUSTRALIA LOGO PROTECTION ACT 1984.'
+No mention of ABC or PP no. 248 of 1994.
+
+Summary: 
+The document is titled 'Report to the Parliament of the Commonwealth of Australia', authored by the Advance Australia Foundation (AA</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Visit: nla.gov.au</summary><div class="inner-result-body">Get the title, year, and any information about the document, including whether it is designated as Parliamentary Paper No. 248 of 1987 (for AAF) or PP No. 248 of 1994 (for ABC) as follows: 
+
+Evidence in page: 
+Title: 'Making sure you're not a bot!'; URL: <a href="https://nla.gov.au/nla.obj-1665762169" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1665762169</a>; Content includes 'Loading...' and description of Anubis proof-of-work system.
+
+Summary: 
+The webpage does not provide the requested document information. It is a security challenge page that prevents access to the underlying content.
+&lt;/tool_response&gt;
+&lt;tool_response&gt;</div></details></div></details><details class="inner-node inner-tool"><summary>🔧 search</summary><div class="inner-result"><details class="inner-result-detail"><summary>Search: "Advance Australia Foundation PP 248 1987"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://nla.gov.au/nla.obj-1117248598" target="_blank" rel="noopener">1985/1986, PP no. 248 of 1987 - National Library of Australia</a>
+
+ADVANCE AUSTRALIA FOUNDATION · (Formerly Advance Australia - · A company limited by guarantee) · Inc. in Australian Capital Territory · ANNUAL REPORT BY COMPANY.
+
+2. <a href="https://donation.watch/en/australia/party/ADVANCE/timeline" target="_blank" rel="noopener">Timeline of Advance Australia party donations Australia</a>
+
+The total amount of donations received by Advance Australia varies by year. Below is a historical overview of the annual funding totals declared by the party.
+
+3. <a href="https://www.wineaustralia.com/getmedia/1caf8428-fc3f-4931-840c-11751f2f17a5/UA-1206-Combined-Final-Report.pdf" target="_blank" rel="noopener">Advance Australia Fair?</a>
+Date published: Sep 30, 2016
+
+Advance Australia Fair? Determining the country of origin assoc</div></details></div><div class="inner-result"><details class="inner-result-detail"><summary>Search: "ABC annual report PP 248 1994 site:nla.g"</summary><div class="inner-result-body">## Web Results
+1. <a href="https://nla.gov.au/nla.obj-1665762169" target="_blank" rel="noopener">1993/1994, PP no. 248 of 1994</a>
+
+Australian Broadcasting Corporation Annual Report 1993-94, 1. Contents, 2. Corporate Objectives, 3. ABC Services, 4 , 5. Highlights 1993-94, 6 , 7. ABC ...
+
+2. <a href="https://nla.gov.au/nla.obj-1818340957" target="_blank" rel="noopener">1993/1994, PP no. 248 of 1994 - National Library of Australia</a>
+
+Australian Broadcasting Corporation Annual Report 1993-94, 1. Contents, 2. Corporate Objectives, 3. ABC Services, 4 , 5. Highlights 1993-94, 6 , 7. ABC ...
+
+3. <a href="https://nla.gov.au/nla.obj-1818340879" target="_blank" rel="noopener">1993/1994, PP no. 248 of 1994 - National Library of Australia</a>
+
+Annual report of the Australian Broadcasting Corporation. 1993/1994, PP no. 248 of 1994; Browse this collection. Details; Copyright; Contents; Search; Text ...
+
+4. [Papers of Sir Rob</div></details></div></details><details class="inner-node inner-think"><summary>think (657 chars)</summary><pre>I've gathered sufficient information. Let me summarize:
+
+1. The Advance Australia Foundation's NLA page (nla.obj-1117248598) clearly shows: "1985/1986, PP no. 248 of 1987" - confirmed.
+
+2. The search for "Advance Australia Foundation PP 248 1987" also returned a result for the 1987/1988 report (PP no. 67 of 1989) and the 1985/1986 one, both on NLA.
+
+3. The ABC's 1993/94 annual report is confirmed as "1993/1994, PP no. 248 of 1994" from multiple NLA pages. The direct visit to nla.gov.au/nla.obj-1665762169 was blocked by a security challenge, but the search results clearly show the title and designation.
+
+I have enough to write a comprehensive report.</pre></details></div></details>
+</div></div></div>
+</details>
+
+<details class="node node-think" id="n12">
+  <summary class="node-title">think (1145 chars)</summary>
+  <div class="node-body"><pre>All the evidence is now confirmed. Let me summarize:
+
+1. **SBS TV started in 1980** - confirmed
+2. **Advance Australia Foundation (AAF)** was founded in 1980 - matches
+3. **Ceased operations mid-1990s** - wound up in the mid-1990s, went into voluntary liquidation in 1996 - matches
+4. **Shares name with a political party founded in 1988** - The Advance Australia Party was founded in 1988 and dissolved in 2005 - both share the name "Advance Australia" - matches
+5. **410 non-exclusive licenses** - confirmed in PP no. 248 of 1987: "During the period 1 June 1985 to 30 June 1986 there were 410 Non-Exclusive licences granted" - matches
+6. **Funded by Australian government, cut in 1986 (Chernobyl year)** - confirmed that funding ended in 1986 - matches
+7. **Participated in "Australian Made" campaign** - a national campaign promoting domestic products - matches
+8. **Parliamentary document number 248** - AAF's report was PP 248 of 1987, ABC's 1993/94 report was PP 248 of 1994 - both numbered 248 - matches
+9. **Gave awards named after itself** - "Advance Australia Award" - matches
+
+The answer is **Advance Australia Foundation** (澳洲前进基金会).</pre></div>
+</details>
+
+<details class="node node-final-report" id="n13">
+  <summary class="node-title">Final response delivered to user</summary>
+  <div class="node-body final-response-body"><div class="final-section"><div class="final-label">Explanation</div><div class="md"><p>This question asks for a now-dissolved non-profit organization satisfying multiple constraints. Let me verify each one:</p>
+<p><strong>Founded in the year SBS TV started:</strong> SBS Television (Special Broadcasting Service) commenced full-time broadcasting in Australia on 24 October 1980 [1]. The <strong>Advance Australia Foundation (AAF)</strong> was established in 1980 [2].</p>
+<p><strong>Ceased operations in the mid-1990s:</strong> The AAF was "wound up in the mid-1990s" and went into voluntary liquidation in 1996 [2][3].</p>
+<p><strong>Shares its name with a dissolved political party founded in 1988:</strong> The <strong>Advance Australia Party</strong> was founded in 1988 (originally as the Rex Connor Labor Party) and was deregistered in 2005 [4]. Both organizations share the name "Advance Australia."</p>
+<p><strong>Granted exactly 410 non-exclusive licenses in one financial year:</strong> According to the AAF's Annual Report 1985/86 (PP no. 248 of 1987), "During the period 1 June 1985 to 30 June 1986 there were 410 Non-Exclusive licences granted" for the use of the "Australian Made" certification mark [5].</p>
+<p><strong>Received partial funding from the central government of the country across the Tasman Sea from New Zealand (i.e., Australia):</strong> The AAF was "for several years partly funded by the Federal Government" [2].</p>
+<p><strong>Funding terminated in the year of the Chernobyl disaster (1986):</strong> The AAF's government funding ended in 1986, the same year as the Chernobyl nuclear accident. As Wikipedia states, "This ended in 1986 when the AAF become involved in the Australian Made campaign, which the Government decided it would prefer to fund directly" [2].</p>
+<p><strong>Participated in a national campaign promoting domestic products:</strong> After losing government funding, the AAF administered the national "Australian Made" logo and ran the "Buy Australian Made" campaign [2][6].</p>
+<p><strong>Published a parliamentary document with the same number as the ABC's 1993/94 annual report:</strong> The ABC (Australian Broadcasting Corporation), headquartered in Sydney — the largest city on Australia's eastern coast — published its Annual Report for 1993/1994 as Parliamentary Paper No. 248 of 1994 [7]. The AAF's Annual Report 1985/86 was also designated PP No. 248 of 1987 [5]. Both carry the parliamentary paper number <strong>248</strong>.</p>
+<p><strong>Established and awarded prizes named after itself:</strong> The AAF gave the <strong>"Advance Australia Award"</strong> to individuals and groups who made "outstanding contributions to the growth and enhancement of Australia" [2].</p>
+<p>All constraints are satisfied by a single entity: the <strong>Advance Australia Foundation</strong>.</p>
+<h4>References</h4>
+<div class="ref-list"><div class="ref-item">[1] SBS (Australian TV channel) - Wikipedia — <a href="https://en.wikipedia.org/wiki/SBS_(Australian_TV_channel" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/SBS_(Australian_TV_channel</a>)</div><div class="ref-item">[2] Advance Australia Foundation - Wikipedia — <a href="https://en.wikipedia.org/wiki/Advance_Australia_Foundation" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Advance_Australia_Foundation</a></div><div class="ref-item">[3] Senate Official Hansard (3 July 1998) — <a href="https://www.aph.gov.au/binaries/hansard/senate/dailys/ds030798.pdf" target="_blank" rel="noopener">https://www.aph.gov.au/binaries/hansard/senate/dailys/ds030798.pdf</a></div><div class="ref-item">[4] Advance Australia Party (1988) - Wikipedia — <a href="https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Advance_Australia_Party_(1988</a>)</div><div class="ref-item">[5] 1985/1986, PP no. 248 of 1987 - National Library of Australia — <a href="https://nla.gov.au/nla.obj-1117248598" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1117248598</a></div><div class="ref-item">[6] History of Australian Made - The Australian Made Campaign — <a href="https://australianmade.com.au/why-buy-australian-made/history-of-australian-made" target="_blank" rel="noopener">https://australianmade.com.au/why-buy-australian-made/history-of-australian-made</a></div><div class="ref-item">[7] 1993/1994, PP no. 248 of 1994 - National Library of Australia — <a href="https://nla.gov.au/nla.obj-1665762169" target="_blank" rel="noopener">https://nla.gov.au/nla.obj-1665762169</a> (search snippet)</div></div></div></div>
+<div class="final-answer-box"><div class="final-label">Answer</div><div class="final-answer-text">Advance Australia Foundation（澳洲前进基金会）</div></div></div>
+</details></div>
+</div>
+</body>
+</html>
